@@ -45,11 +45,11 @@
 <meta property="og:title" content="组合学 Combinatorics">
 <meta property="og:url" content="https://archerui.github.io/2026/03/21/TUM%20%20%E6%95%B0%E5%AD%A6%20%E7%AC%94%E8%AE%B0/%E7%BB%84%E5%90%88%E5%AD%A6/%E7%BB%84%E5%90%88%E5%AD%A6-Combinatorics/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="取球问题（Urn Model）现在有一个盒子，里面有$n$个球。我们现在会从里面取$k$次球出来。 我们分4种情况讨论： 1. 球取出来之后不放回去，关注顺序。 那么一共有  n(n-1)\cdots(n-k+1)&#x3D;\frac{n!}{(n-k)!}种情况。 写成集合：  \left|\left\{(s_1,\ldots,s_k)\in [n]^k \;\middle|\; \left|\{s_1">
+<meta property="og:description" content="取球问题（Urn Model）现在有一个盒子，里面有$n$个球（球可分）。我们现在会从里面取$k$次球出来。 我们分4种情况讨论： 1. 球取出来之后不放回去，关注顺序。 那么一共有  n(n-1)\cdots(n-k+1)&#x3D;\frac{n!}{(n-k)!}种情况。 写成集合：  \left|\left\{(s_1,\ldots,s_k)\in [n]^k \;\middle|\; \left|">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png">
 <meta property="article:published_time" content="2026-03-21T08:26:45.000Z">
-<meta property="article:modified_time" content="2026-03-21T12:23:14.290Z">
+<meta property="article:modified_time" content="2026-03-22T08:09:25.760Z">
 <meta property="article:tag" content="组合学">
 <meta property="article:tag" content="Combinatorics">
 <meta name="twitter:card" content="summary">
@@ -2247,7 +2247,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
     root: '/',
     debug: "env",
     default: {"avatar":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/avatar/round/3442075.svg","link":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/link/8f277b4ee0ecd.svg","cover":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/cover/76b86c0226ffd.svg","image":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/image/2659360.svg"},
-    lastupdate: new Date(1774130689996),
+    lastupdate: new Date(1774166998508),
     cdn: {
       izitoast_css: 'https://unpkg.com/izitoast@1.4.0/dist/css/iziToast.min.css',
       izitoast_js: 'https://unpkg.com/izitoast@1.4.0/dist/js/iziToast.min.js',
@@ -2725,10 +2725,10 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
           
         
           
-            <div class="new-meta-item date" itemprop="dateModified" datetime="2026-03-21T13:23:14+01:00">
+            <div class="new-meta-item date" itemprop="dateModified" datetime="2026-03-22T09:09:25+01:00">
   <a class='notlink'>
     <i class="fa-solid fa-edit fa-fw" aria-hidden="true"></i>
-    <p>Last UpdatedMar 21, 2026</p>
+    <p>Last UpdatedMar 22, 2026</p>
   </a>
 </div>
 
@@ -2765,7 +2765,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 
   <div id="layoutHelper-page-plugins"></div>
   <div id="post-body" itemprop="articleBody">
-    <h2 id="取球问题（Urn-Model）"><a href="#取球问题（Urn-Model）" class="headerlink" title="取球问题（Urn Model）"></a><strong>取球问题（Urn Model）</strong></h2><p><strong>现在有一个盒子，里面有$n$个球。我们现在会从里面取$k$次球出来。</strong></p>
+    <h2 id="取球问题（Urn-Model）"><a href="#取球问题（Urn-Model）" class="headerlink" title="取球问题（Urn Model）"></a><strong>取球问题（Urn Model）</strong></h2><p><strong>现在有一个盒子，里面有$n$个球（球可分）。我们现在会从里面取$k$次球出来。</strong></p>
 <p>我们分4种情况讨论：</p>
 <p><strong>1. 球取出来之后不放回去，关注顺序。</strong></p>
 <p>那么一共有</p>
@@ -3678,7 +3678,7 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
 </script>
 
 
-  <script type="application/ld+json">[{"@context":"https://schema.org.cn","@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"https://schema.org.cn","@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","sameAs":["https://github.com/volantis-x"],"description":"hi"},{"@context":"https://schema.org.cn","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https://archerui.github.io/","name":"Hexo"}},{"@type":"ListItem","position":2,"item":{"@id":"https://archerui.github.io/categories/TUM-数学-笔记/","name":"TUM 数学 笔记"}},{"@type":"ListItem","position":2,"item":{"@id":"https://archerui.github.io/categories/TUM-数学-笔记/组合学-Combinatorics/","name":"组合学 Combinatorics"}},{"@type":"ListItem","position":3,"item":{"@id":"https://archerui.github.io/2026/03/21/TUM  数学 笔记/组合学/组合学-Combinatorics/","name":"组合学 Combinatorics"}}]},{"@context":"https://schema.org.cn","@type":"WebSite","name":"Hexo","url":"https://archerui.github.io/","keywords":null,"description":"hi","author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","description":"hi"},"publisher":{"@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"https://archerui.github.io?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"https://schema.org.cn","@type":"BlogPosting","headline":"组合学 Combinatorics","description":"hi","inLanguage":"en","mainEntityOfPage":{"@type":"WebPage","@id":"https://archerui.github.io/2026/03/21/TUM%20%20%E6%95%B0%E5%AD%A6%20%E7%AC%94%E8%AE%B0/%E7%BB%84%E5%90%88%E5%AD%A6/%E7%BB%84%E5%90%88%E5%AD%A6-Combinatorics/"},"author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/"},"publisher":{"@type":"Organization","name":"Hexo","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"https://archerui.github.io/2026/03/21/TUM%20%20%E6%95%B0%E5%AD%A6%20%E7%AC%94%E8%AE%B0/%E7%BB%84%E5%90%88%E5%AD%A6/%E7%BB%84%E5%90%88%E5%AD%A6-Combinatorics/","wordCount":0,"datePublished":"2026-03-21T08:26:45.000Z","dateModified":"2026-03-21T12:23:14.290Z","articleSection":"TUM 数学 笔记","keywords":"组合学,Combinatorics","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
+  <script type="application/ld+json">[{"@context":"https://schema.org.cn","@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"https://schema.org.cn","@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","sameAs":["https://github.com/volantis-x"],"description":"hi"},{"@context":"https://schema.org.cn","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https://archerui.github.io/","name":"Hexo"}},{"@type":"ListItem","position":2,"item":{"@id":"https://archerui.github.io/categories/TUM-数学-笔记/","name":"TUM 数学 笔记"}},{"@type":"ListItem","position":2,"item":{"@id":"https://archerui.github.io/categories/TUM-数学-笔记/组合学-Combinatorics/","name":"组合学 Combinatorics"}},{"@type":"ListItem","position":3,"item":{"@id":"https://archerui.github.io/2026/03/21/TUM  数学 笔记/组合学/组合学-Combinatorics/","name":"组合学 Combinatorics"}}]},{"@context":"https://schema.org.cn","@type":"WebSite","name":"Hexo","url":"https://archerui.github.io/","keywords":null,"description":"hi","author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","description":"hi"},"publisher":{"@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"https://archerui.github.io?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"https://schema.org.cn","@type":"BlogPosting","headline":"组合学 Combinatorics","description":"hi","inLanguage":"en","mainEntityOfPage":{"@type":"WebPage","@id":"https://archerui.github.io/2026/03/21/TUM%20%20%E6%95%B0%E5%AD%A6%20%E7%AC%94%E8%AE%B0/%E7%BB%84%E5%90%88%E5%AD%A6/%E7%BB%84%E5%90%88%E5%AD%A6-Combinatorics/"},"author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/"},"publisher":{"@type":"Organization","name":"Hexo","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"https://archerui.github.io/2026/03/21/TUM%20%20%E6%95%B0%E5%AD%A6%20%E7%AC%94%E8%AE%B0/%E7%BB%84%E5%90%88%E5%AD%A6/%E7%BB%84%E5%90%88%E5%AD%A6-Combinatorics/","wordCount":0,"datePublished":"2026-03-21T08:26:45.000Z","dateModified":"2026-03-22T08:09:25.760Z","articleSection":"TUM 数学 笔记","keywords":"组合学,Combinatorics","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
 
 
 
