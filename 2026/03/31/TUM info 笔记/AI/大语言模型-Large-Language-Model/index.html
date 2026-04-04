@@ -49,7 +49,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png">
 <meta property="article:published_time" content="2026-03-30T22:45:46.000Z">
-<meta property="article:modified_time" content="2026-03-31T10:20:33.378Z">
+<meta property="article:modified_time" content="2026-04-04T14:12:10.554Z">
 <meta property="article:tag" content="大语言模型">
 <meta property="article:tag" content="Large Language Model">
 <meta name="twitter:card" content="summary">
@@ -2247,7 +2247,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
     root: '/',
     debug: "env",
     default: {"avatar":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/avatar/round/3442075.svg","link":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/link/8f277b4ee0ecd.svg","cover":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/cover/76b86c0226ffd.svg","image":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/image/2659360.svg"},
-    lastupdate: new Date(1774954353966),
+    lastupdate: new Date(1775322934168),
     cdn: {
       izitoast_css: 'https://unpkg.com/izitoast@1.4.0/dist/css/iziToast.min.css',
       izitoast_js: 'https://unpkg.com/izitoast@1.4.0/dist/js/iziToast.min.js',
@@ -2725,10 +2725,10 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
           
         
           
-            <div class="new-meta-item date" itemprop="dateModified" datetime="2026-03-31T12:20:33+02:00">
+            <div class="new-meta-item date" itemprop="dateModified" datetime="2026-04-04T16:12:10+02:00">
   <a class='notlink'>
     <i class="fa-solid fa-edit fa-fw" aria-hidden="true"></i>
-    <p>Last UpdatedMar 31, 2026</p>
+    <p>Last UpdatedApr 4, 2026</p>
   </a>
 </div>
 
@@ -2771,7 +2771,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 <p><strong>条件生成式模型（Conditional Generative Model）</strong> 学习 p(x|y)，在给定标签y的条件下生成数据x。例如，给定”猫”这个标签，生成一张猫的图片。每个标签都会在自己的概率空间内引发竞争。</p>
 <p><strong>Bayes’ Rule的桥梁作用：</strong> 三种模型通过贝叶斯公式相互关联：</p>
 <script type="math/tex; mode=display">
-p(x \mid y) = p(y \mid x) \cdot p(x)/p(y)</script><p>其中p(x|y)是条件生成模型，p(y|x)是判别模型，p(x)是生成模型，p(y)是标签先验。在理论上它们可以互推，但现代深度学习通常直接通过训练近似这些关系，而非手动组合。</p>
+p(x \mid y) = \frac{p(y \mid x)}{p(y)} \cdot p(x)</script><p>其中p(x|y)是条件生成模型，p(y|x)是判别模型，p(x)是生成模型，p(y)是标签先验。在理论上它们可以互推，但现代深度学习通常直接通过训练近似这些关系，而非手动组合。</p>
 <h4 id="定义语言模型"><a href="#定义语言模型" class="headerlink" title="定义语言模型"></a><strong>定义语言模型</strong></h4><p><strong>传统NLP的局限：</strong> 过去的NLP系统通常只针对单一任务优化——比如情感分析、垃圾邮件检测、文本分类。这些大多是判别式任务，模型只学习 p(y|x)，在特定任务上表现很好，但超出该任务范围就束手无策，也不需要真正”理解”语言结构。</p>
 <p><strong>LLM的核心：下一个token预测</strong></p>
 <p>从单步来看，预测下一个词是<strong>判别式</strong>的：给定上下文x，在词表中所有词语之间分配概率，选出最可能的下一个词。例如 p(“quick” | “The”)。</p>
@@ -2787,6 +2787,12 @@ p(x \mid y) = \Pi \ p(x_t \mid y, x<t)</script><p>这里prompt <code>y</code>充
 <li>后来指出现了”涌现能力”（emergent behaviors）的规模</li>
 <li>现在”大”既指参数量，也指训练数据量（万亿级token）</li>
 </ul>
+<h3 id="LLM发展的关键里程碑"><a href="#LLM发展的关键里程碑" class="headerlink" title="LLM发展的关键里程碑"></a><strong>LLM</strong>发展的关键里程碑</h3><p><strong>1. Few-Shot Learning（2020）</strong> 以GPT-3为代表，发现无需更新模型权重，只需在context window中提供任务描述和示例，模型就能完成新任务。分为零样本（zero-shot）、单样本（one-shot）和少样本（few-shot）三种形式。这一发现虽然如今已是基础常识，但它奠定了RAG等现代技术的基础。</p>
+<p><strong>2. 指令微调与对齐（2021/2022）</strong> 原始预训练模型只是”自动补全引擎”，并不能按照人类意图工作。通过RLHF（人类反馈强化学习）等技术进行指令微调，以InstructGPT、FLAN、ChatGPT为代表，使模型真正能够理解并执行自然语言指令，成为今天人机交互的标准范式。</p>
+<p><strong>3. 多模态与多语言（2022/2023）</strong> 模型能力从纯英文文本扩展到图像、音频等多种模态。早期方案是为文本模型附加独立的视觉/音频编码器，而”原生多模态”方案则让单一模型直接将图像像素和音频波形作为token处理。GPT-4V、早期Gemini、Flamingo是代表性工作。如今前沿模型默认就是全模态（omni-modal）的。</p>
+<p><strong>4. RAG检索增强生成（2023）</strong> 解决LLM知识陈旧和幻觉问题：在生成答案前先从外部数据库检索相关内容作为上下文。如今已是绝大多数工业应用的标准方案，并带动了向量数据库、OCR等周边技术的发展，也推动LLM训练重心从”记忆更多知识”转向”长上下文处理能力”。</p>
+<p><strong>5. AI Agent与工具调用（2024）</strong> 让模型不仅能”说”，还能”做”——调用API、执行代码、浏览网页等。核心是”感知→推理→行动→反思”的智能体循环。早期的热炒是全自主循环，现在行业更关注可靠的、确定性的函数调用，是B2B AI应用的主要商业驱动力。</p>
+<p><strong>6. 推理模型（2025）</strong> 发现在正式回答前生成大量”思考token”可以大幅提升复杂任务表现（chain-of-thought）。代表性实现是在prompt后插入<code>&lt;think&gt;</code>标签，模型在<code>&lt;/think&gt;</code>之前自由生成推理过程，最终答案才展示给用户。这是目前的技术前沿，推动了”推理时计算扩展”的范式转变。</p>
 <h2 id="Benchmark"><a href="#Benchmark" class="headerlink" title="Benchmark"></a><strong>Benchmark</strong></h2>
   </div>
   
@@ -2943,7 +2949,7 @@ n(n-...</p>
 
 
   <div class='content'>
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Basics"><span class="toc-number">1.</span> <span class="toc-text">Basics</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E5%88%AB%E5%BC%8F-vs-%E7%94%9F%E6%88%90%E5%BC%8F%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.1.</span> <span class="toc-text">判别式 vs. 生成式模型</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.1.1.</span> <span class="toc-text">定义语言模型</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Benchmark"><span class="toc-number">2.</span> <span class="toc-text">Benchmark</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Basics"><span class="toc-number">1.</span> <span class="toc-text">Basics</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E5%88%AB%E5%BC%8F-vs-%E7%94%9F%E6%88%90%E5%BC%8F%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.1.</span> <span class="toc-text">判别式 vs. 生成式模型</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.1.1.</span> <span class="toc-text">定义语言模型</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LLM%E5%8F%91%E5%B1%95%E7%9A%84%E5%85%B3%E9%94%AE%E9%87%8C%E7%A8%8B%E7%A2%91"><span class="toc-number">1.2.</span> <span class="toc-text">LLM发展的关键里程碑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Benchmark"><span class="toc-number">2.</span> <span class="toc-text">Benchmark</span></a></li></ol>
   </div>
 </section>
 
@@ -3612,7 +3618,7 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
 </script>
 
 
-  <script type="application/ld+json">[{"@context":"https://schema.org.cn","@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"https://schema.org.cn","@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","sameAs":["https://github.com/volantis-x"],"description":"hi"},{"@context":"https://schema.org.cn","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https://archerui.github.io/","name":"Hexo"}},{"@type":"ListItem","position":2,"item":{"@id":"https://archerui.github.io/categories/TUM-info-课程笔记/","name":"TUM info 课程笔记"}},{"@type":"ListItem","position":2,"item":{"@id":"https://archerui.github.io/categories/TUM-info-课程笔记/AI/","name":"AI"}},{"@type":"ListItem","position":3,"item":{"@id":"https://archerui.github.io/2026/03/31/TUM info 笔记/AI/大语言模型-Large-Language-Model/","name":"大语言模型 Large Language Model"}}]},{"@context":"https://schema.org.cn","@type":"WebSite","name":"Hexo","url":"https://archerui.github.io/","keywords":null,"description":"hi","author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","description":"hi"},"publisher":{"@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"https://archerui.github.io?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"https://schema.org.cn","@type":"BlogPosting","headline":"大语言模型 Large Language Model","description":"大语言模型相关笔记","inLanguage":"en","mainEntityOfPage":{"@type":"WebPage","@id":"https://archerui.github.io/2026/03/31/TUM%20info%20%E7%AC%94%E8%AE%B0/AI/%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B-Large-Language-Model/"},"author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/"},"publisher":{"@type":"Organization","name":"Hexo","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"https://archerui.github.io/2026/03/31/TUM%20info%20%E7%AC%94%E8%AE%B0/AI/%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B-Large-Language-Model/","wordCount":9,"datePublished":"2026-03-30T22:45:46.000Z","dateModified":"2026-03-31T10:20:33.378Z","articleSection":"TUM info 课程笔记","keywords":"大语言模型,Large Language Model","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
+  <script type="application/ld+json">[{"@context":"https://schema.org.cn","@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"https://schema.org.cn","@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","sameAs":["https://github.com/volantis-x"],"description":"hi"},{"@context":"https://schema.org.cn","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https://archerui.github.io/","name":"Hexo"}},{"@type":"ListItem","position":2,"item":{"@id":"https://archerui.github.io/categories/TUM-info-课程笔记/","name":"TUM info 课程笔记"}},{"@type":"ListItem","position":2,"item":{"@id":"https://archerui.github.io/categories/TUM-info-课程笔记/AI/","name":"AI"}},{"@type":"ListItem","position":3,"item":{"@id":"https://archerui.github.io/2026/03/31/TUM info 笔记/AI/大语言模型-Large-Language-Model/","name":"大语言模型 Large Language Model"}}]},{"@context":"https://schema.org.cn","@type":"WebSite","name":"Hexo","url":"https://archerui.github.io/","keywords":null,"description":"hi","author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","description":"hi"},"publisher":{"@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"https://archerui.github.io?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"https://schema.org.cn","@type":"BlogPosting","headline":"大语言模型 Large Language Model","description":"大语言模型相关笔记","inLanguage":"en","mainEntityOfPage":{"@type":"WebPage","@id":"https://archerui.github.io/2026/03/31/TUM%20info%20%E7%AC%94%E8%AE%B0/AI/%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B-Large-Language-Model/"},"author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/"},"publisher":{"@type":"Organization","name":"Hexo","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"https://archerui.github.io/2026/03/31/TUM%20info%20%E7%AC%94%E8%AE%B0/AI/%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B-Large-Language-Model/","wordCount":9,"datePublished":"2026-03-30T22:45:46.000Z","dateModified":"2026-04-04T14:12:10.554Z","articleSection":"TUM info 课程笔记","keywords":"大语言模型,Large Language Model","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
 
 
 
