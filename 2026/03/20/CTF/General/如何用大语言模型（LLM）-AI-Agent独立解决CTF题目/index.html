@@ -9,7 +9,7 @@
    
   <!-- SEO相关 -->
   
-  <link rel="canonical" href="https://archerui.github.io/2026/03/20/ctf/general/如何用大语言模型（llm）辅助解决ctf题目/"/>
+  <link rel="canonical" href="https://archerui.github.io/2026/03/20/ctf/general/如何用大语言模型（llm）-ai-agent独立解决ctf题目/"/>
   <!-- 渲染优化 -->
     <meta http-equiv='x-dns-prefetch-control' content='on' />
       <link rel='dns-prefetch' href='https://unpkg.com'>
@@ -43,13 +43,13 @@
   
 <meta property="og:type" content="article">
 <meta property="og:title" content="如何用大语言模型（LLM）&#x2F;AI Agent独立解决CTF题目">
-<meta property="og:url" content="https://archerui.github.io/2026/03/20/CTF/General/%E5%A6%82%E4%BD%95%E7%94%A8%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%EF%BC%88LLM%EF%BC%89%E8%BE%85%E5%8A%A9%E8%A7%A3%E5%86%B3CTF%E9%A2%98%E7%9B%AE/index.html">
+<meta property="og:url" content="https://archerui.github.io/2026/03/20/CTF/General/%E5%A6%82%E4%BD%95%E7%94%A8%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%EF%BC%88LLM%EF%BC%89-AI-Agent%E7%8B%AC%E7%AB%8B%E8%A7%A3%E5%86%B3CTF%E9%A2%98%E7%9B%AE/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="由于当前大语言模型发展迅速，其能够辅助甚至独立解决的CTF题目越来越多，因此这里尝试研究其在CTF场景中的适用性以及提示词（Prompt）技巧。 CTF的题目类型主要可以分成静态和动态：  做部分静态题目时，可以直接将题目附件、源码或相关文件一次性提供给 （网页版的）AI 即可。信息比较全面，且不容易触发安全检查。网页版GPT目前可以调用很多工具，所以支持分析的文件格式也很多。但网页版AI不支持与">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png">
 <meta property="article:published_time" content="2026-03-20T09:47:29.000Z">
-<meta property="article:modified_time" content="2026-04-07T16:58:30.789Z">
+<meta property="article:modified_time" content="2026-04-07T17:18:18.950Z">
 <meta property="article:tag" content="ctf">
 <meta property="article:tag" content="LLM">
 <meta name="twitter:card" content="summary">
@@ -2247,7 +2247,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
     root: '/',
     debug: "env",
     default: {"avatar":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/avatar/round/3442075.svg","link":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/link/8f277b4ee0ecd.svg","cover":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/cover/76b86c0226ffd.svg","image":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/image/2659360.svg"},
-    lastupdate: new Date(1775581137130),
+    lastupdate: new Date(1775582386950),
     cdn: {
       izitoast_css: 'https://unpkg.com/izitoast@1.4.0/dist/css/iziToast.min.css',
       izitoast_js: 'https://unpkg.com/izitoast@1.4.0/dist/js/iziToast.min.js',
@@ -2663,7 +2663,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
           
 <div id="l_main" class=''>
   <article itemscope itemtype="https://schema.org.cn/Article" class="article post white-box reveal md shadow floatable blur article-type-post" id="post" itemscope itemprop="blogPost">
-  <link itemprop="mainEntityOfPage" href="https://archerui.github.io/2026/03/20/CTF/General/如何用大语言模型（LLM）辅助解决CTF题目/">
+  <link itemprop="mainEntityOfPage" href="https://archerui.github.io/2026/03/20/CTF/General/如何用大语言模型（LLM）-AI-Agent独立解决CTF题目/">
   <span hidden itemprop="publisher" itemscope itemtype="https://schema.org.cn/Organization">
     <meta itemprop="name" content="Hexo">
   </span>
@@ -2725,7 +2725,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
           
         
           
-            <div class="new-meta-item date" itemprop="dateModified" datetime="2026-04-07T18:58:30+02:00">
+            <div class="new-meta-item date" itemprop="dateModified" datetime="2026-04-07T19:18:18+02:00">
   <a class='notlink'>
     <i class="fa-solid fa-edit fa-fw" aria-hidden="true"></i>
     <p>Last UpdatedApr 7, 2026</p>
@@ -2892,7 +2892,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
       
         <a class="-mob-share-qq" title="" rel="external nofollow noopener noreferrer noopener"
           
-          target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://archerui.github.io/2026/03/20/CTF/General/%E5%A6%82%E4%BD%95%E7%94%A8%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%EF%BC%88LLM%EF%BC%89%E8%BE%85%E5%8A%A9%E8%A7%A3%E5%86%B3CTF%E9%A2%98%E7%9B%AE/&title=如何用大语言模型（LLM）/AI Agent独立解决CTF题目 - Hexo&summary="
+          target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://archerui.github.io/2026/03/20/CTF/General/%E5%A6%82%E4%BD%95%E7%94%A8%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%EF%BC%88LLM%EF%BC%89-AI-Agent%E7%8B%AC%E7%AB%8B%E8%A7%A3%E5%86%B3CTF%E9%A2%98%E7%9B%AE/&title=如何用大语言模型（LLM）/AI Agent独立解决CTF题目 - Hexo&summary="
           
           >
           
@@ -2904,7 +2904,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
       
         <a class="-mob-share-qzone" title="" rel="external nofollow noopener noreferrer noopener"
           
-          target="_blank" href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=https://archerui.github.io/2026/03/20/CTF/General/%E5%A6%82%E4%BD%95%E7%94%A8%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%EF%BC%88LLM%EF%BC%89%E8%BE%85%E5%8A%A9%E8%A7%A3%E5%86%B3CTF%E9%A2%98%E7%9B%AE/&title=如何用大语言模型（LLM）/AI Agent独立解决CTF题目 - Hexo&summary="
+          target="_blank" href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=https://archerui.github.io/2026/03/20/CTF/General/%E5%A6%82%E4%BD%95%E7%94%A8%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%EF%BC%88LLM%EF%BC%89-AI-Agent%E7%8B%AC%E7%AB%8B%E8%A7%A3%E5%86%B3CTF%E9%A2%98%E7%9B%AE/&title=如何用大语言模型（LLM）/AI Agent独立解决CTF题目 - Hexo&summary="
           
           >
           
@@ -2916,7 +2916,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
       
         <a class="-mob-share-weibo" title="" rel="external nofollow noopener noreferrer noopener"
           
-          target="_blank" href="http://service.weibo.com/share/share.php?url=https://archerui.github.io/2026/03/20/CTF/General/%E5%A6%82%E4%BD%95%E7%94%A8%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%EF%BC%88LLM%EF%BC%89%E8%BE%85%E5%8A%A9%E8%A7%A3%E5%86%B3CTF%E9%A2%98%E7%9B%AE/&title=如何用大语言模型（LLM）/AI Agent独立解决CTF题目 - Hexo&summary="
+          target="_blank" href="http://service.weibo.com/share/share.php?url=https://archerui.github.io/2026/03/20/CTF/General/%E5%A6%82%E4%BD%95%E7%94%A8%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%EF%BC%88LLM%EF%BC%89-AI-Agent%E7%8B%AC%E7%AB%8B%E8%A7%A3%E5%86%B3CTF%E9%A2%98%E7%9B%AE/&title=如何用大语言模型（LLM）/AI Agent独立解决CTF题目 - Hexo&summary="
           
           >
           
@@ -3627,7 +3627,7 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
 </script>
 
 
-  <script type="application/ld+json">[{"@context":"https://schema.org.cn","@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"https://schema.org.cn","@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","sameAs":["https://github.com/volantis-x"],"description":"hi"},{"@context":"https://schema.org.cn","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https://archerui.github.io/","name":"Hexo"}},{"@type":"ListItem","position":2,"item":{"@id":"https://archerui.github.io/categories/CTF/","name":"CTF"}},{"@type":"ListItem","position":2,"item":{"@id":"https://archerui.github.io/categories/CTF/General/","name":"General"}},{"@type":"ListItem","position":3,"item":{"@id":"https://archerui.github.io/2026/03/20/CTF/General/如何用大语言模型（LLM）辅助解决CTF题目/","name":"如何用大语言模型（LLM）/AI Agent独立解决CTF题目"}}]},{"@context":"https://schema.org.cn","@type":"WebSite","name":"Hexo","url":"https://archerui.github.io/","keywords":null,"description":"hi","author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","description":"hi"},"publisher":{"@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"https://archerui.github.io?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"https://schema.org.cn","@type":"BlogPosting","headline":"如何用大语言模型（LLM）/AI Agent独立解决CTF题目","description":"hi","inLanguage":"en","mainEntityOfPage":{"@type":"WebPage","@id":"https://archerui.github.io/2026/03/20/CTF/General/%E5%A6%82%E4%BD%95%E7%94%A8%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%EF%BC%88LLM%EF%BC%89%E8%BE%85%E5%8A%A9%E8%A7%A3%E5%86%B3CTF%E9%A2%98%E7%9B%AE/"},"author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/"},"publisher":{"@type":"Organization","name":"Hexo","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"https://archerui.github.io/2026/03/20/CTF/General/%E5%A6%82%E4%BD%95%E7%94%A8%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%EF%BC%88LLM%EF%BC%89%E8%BE%85%E5%8A%A9%E8%A7%A3%E5%86%B3CTF%E9%A2%98%E7%9B%AE/","wordCount":0,"datePublished":"2026-03-20T09:47:29.000Z","dateModified":"2026-04-07T16:58:30.789Z","articleSection":"CTF","keywords":"ctf,LLM","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
+  <script type="application/ld+json">[{"@context":"https://schema.org.cn","@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"https://schema.org.cn","@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","sameAs":["https://github.com/volantis-x"],"description":"hi"},{"@context":"https://schema.org.cn","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https://archerui.github.io/","name":"Hexo"}},{"@type":"ListItem","position":2,"item":{"@id":"https://archerui.github.io/categories/CTF/","name":"CTF"}},{"@type":"ListItem","position":2,"item":{"@id":"https://archerui.github.io/categories/CTF/General/","name":"General"}},{"@type":"ListItem","position":3,"item":{"@id":"https://archerui.github.io/2026/03/20/CTF/General/如何用大语言模型（LLM）-AI-Agent独立解决CTF题目/","name":"如何用大语言模型（LLM）/AI Agent独立解决CTF题目"}}]},{"@context":"https://schema.org.cn","@type":"WebSite","name":"Hexo","url":"https://archerui.github.io/","keywords":null,"description":"hi","author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","description":"hi"},"publisher":{"@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"https://archerui.github.io?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"https://schema.org.cn","@type":"BlogPosting","headline":"如何用大语言模型（LLM）/AI Agent独立解决CTF题目","description":"hi","inLanguage":"en","mainEntityOfPage":{"@type":"WebPage","@id":"https://archerui.github.io/2026/03/20/CTF/General/%E5%A6%82%E4%BD%95%E7%94%A8%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%EF%BC%88LLM%EF%BC%89-AI-Agent%E7%8B%AC%E7%AB%8B%E8%A7%A3%E5%86%B3CTF%E9%A2%98%E7%9B%AE/"},"author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/"},"publisher":{"@type":"Organization","name":"Hexo","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"https://archerui.github.io/2026/03/20/CTF/General/%E5%A6%82%E4%BD%95%E7%94%A8%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%EF%BC%88LLM%EF%BC%89-AI-Agent%E7%8B%AC%E7%AB%8B%E8%A7%A3%E5%86%B3CTF%E9%A2%98%E7%9B%AE/","wordCount":0,"datePublished":"2026-03-20T09:47:29.000Z","dateModified":"2026-04-07T17:18:18.950Z","articleSection":"CTF","keywords":"ctf,LLM","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
 
 
 
