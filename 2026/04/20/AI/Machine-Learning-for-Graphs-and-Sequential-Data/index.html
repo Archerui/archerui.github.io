@@ -49,7 +49,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png">
 <meta property="article:published_time" content="2026-04-19T22:14:35.000Z">
-<meta property="article:modified_time" content="2026-04-22T14:59:25.881Z">
+<meta property="article:modified_time" content="2026-04-24T22:08:58.475Z">
 <meta property="article:tag" content="机器学习">
 <meta property="article:tag" content="Machine Learning">
 <meta property="article:tag" content="AI">
@@ -2248,7 +2248,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
     root: '/',
     debug: "env",
     default: {"avatar":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/avatar/round/3442075.svg","link":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/link/8f277b4ee0ecd.svg","cover":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/cover/76b86c0226ffd.svg","image":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/image/2659360.svg"},
-    lastupdate: new Date(1776871417388),
+    lastupdate: new Date(1777068577565),
     cdn: {
       izitoast_css: 'https://unpkg.com/izitoast@1.4.0/dist/css/iziToast.min.css',
       izitoast_js: 'https://unpkg.com/izitoast@1.4.0/dist/js/iziToast.min.js',
@@ -2722,10 +2722,10 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
           
         
           
-            <div class="new-meta-item date" itemprop="dateModified" datetime="2026-04-22T16:59:25+02:00">
+            <div class="new-meta-item date" itemprop="dateModified" datetime="2026-04-25T00:08:58+02:00">
   <a class='notlink'>
     <i class="fa-solid fa-edit fa-fw" aria-hidden="true"></i>
-    <p>Last UpdatedApr 22, 2026</p>
+    <p>Last UpdatedApr 25, 2026</p>
   </a>
 </div>
 
@@ -2968,7 +2968,7 @@ P(X_{t+1} = j \mid X_t = i) = A_{ij}</script><p>也就是$A^{(t)} \equiv A  \ \f
 <p><br></p>
 <div class="note green"><p><strong></strong></p><p><strong>Theorem</strong>:</p><script type="math/tex; mode=display">P(X_t=j) = (\pi A^{(t-1)})_j</script></div>
 <p><br></p>
-<h3 id="参数学习（Parameter-learning）-1"><a href="#参数学习（Parameter-learning）-1" class="headerlink" title="参数学习（Parameter learning）"></a><strong>参数学习（Parameter learning）</strong></h3><p>核心思路就是用MLE（maximum likelihood estimation）。</p>
+<h4 id="参数学习（Parameter-learning）-1"><a href="#参数学习（Parameter-learning）-1" class="headerlink" title="参数学习（Parameter learning）"></a><strong>参数学习（Parameter learning）</strong></h4><p>核心思路就是用MLE（maximum likelihood estimation）。</p>
 <p>假设有$N$条观测序列：</p>
 <script type="math/tex; mode=display">
 \mathcal{D} = \{ x^{(1)}_{1:T_1}, x^{(2)}_{1:T_2}, ... , x^{(N)}_{1:T_N} \}</script><p>每条的长度是$T_i$。比如说</p>
@@ -3017,7 +3017,217 @@ A =
 \frac{1}{3} & 0 & \frac{2}{3}\\
 0 & 0 & 0\\
 0 & 1 & 0
-\end{pmatrix}</script><h3 id="Hidden-Markov-Models"><a href="#Hidden-Markov-Models" class="headerlink" title="Hidden Markov Models"></a><strong>Hidden Markov Models</strong></h3>
+\end{pmatrix}</script><h3 id="Hidden-Markov-Models"><a href="#Hidden-Markov-Models" class="headerlink" title="Hidden Markov Models"></a><strong>Hidden Markov Models</strong></h3><p>现实中很多系统的真实状态并不能直接被看到，我们只能通过观测来间接感知。</p>
+<p>所以我们需要考虑当序列数据的真实状态看不见，只能看到带噪声的观测时，怎么建模、推断和学习参数。</p>
+<p>比如说我们考虑一个观测飞机位置的例子：</p>
+<ul>
+<li>真正的状态是位置、速度等物理量，是<strong>隐藏变量</strong></li>
+<li>传感器读到的是有噪声的位置，是<strong>观测变量</strong></li>
+</ul>
+<p>真实状态序列可能满足 Markov 性，但观测序列本身未必满足，所以需要 HMM。</p>
+<div class="note yellow"><p><strong></strong></p><p><strong>Definition</strong>: A <strong>Hidden Markov Model (HMM)</strong> is composed of a sequence of <strong>hidden/latent variables</strong> $[Z_1,\ldots,Z_T]$ and a sequence of <strong>observed variables</strong> $[X_1,\ldots,X_T]$ such that:</p><ul><li>The r.v. $Z_1,\ldots,Z_T$ satisfy the Markov property:</li></ul><script type="math/tex; mode=display">P(Z_{t+1}\mid Z_t,Z_{t-1},\ldots,Z_1)=P(Z_{t+1}\mid Z_t)</script><p>where $P(Z_{t+1}\mid Z_t)$ are the <strong>transition probabilities</strong>.</p><ul><li>Distribution of $X_t$ depends only on $Z_t$:</li></ul><script type="math/tex; mode=display">P(X_{t+1}\mid Z_1,\ldots,Z_T,X_1,\ldots,X_T)=P(X_{t+1}\mid Z_{t+1})</script><p>where $P(X_{t+1}\mid Z_{t+1})$ are the <strong>emission probabilities</strong>.</p></div>
+<p>也就是说当前隐藏状态只依赖上一个隐藏状态，并且当前观测状态只取决于当前的隐藏状态。</p>
+<p><br></p>
+<p>和之前一样，可以这样建模：</p>
+<script type="math/tex; mode=display">
+\begin{align*}
+P(Z_1=i)&=\pi_i \\
+P(Z_{t+1}=j \mid Z_t=i)&=A_{ij}^{(t+1)} \\
+P(X_{t+1}=j \mid Z_{t+1}=i)&=B_{ij}^{(t+1)} \\
+\end{align*}</script><p><img src="/images/image-20260424155445891.png" class="lazyload" data-srcset="/images/image-20260424155445891.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="image-20260424155445891"></p>
+<p>但为了降低参数数量，我们还是假设所有时间点共享一样的分布$A,B$：</p>
+<p><img src="/images/image-20260424160701507.png" class="lazyload" data-srcset="/images/image-20260424160701507.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="image-20260424160701507"></p>
+<p><br></p>
+<p>在HMM中，我们一般有2种任务（都是假设已知观测数据$X_{1:T}$）：</p>
+<ul>
+<li><strong>Inference</strong>：参数（$(\pi, A, B)$）已知，推导隐藏状态</li>
+<li><strong>Parameter Learning</strong>：隐藏状态未知，学习模型参数</li>
+</ul>
+<h4 id="Inference"><a href="#Inference" class="headerlink" title="Inference"></a><strong>Inference</strong></h4><p>而Inference一般也分3种：</p>
+<ul>
+<li><p>Filtering: computes $P(Z_t \mid X_{1:t} )$ online</p>
+<p>只拥有到目前为止的所有观测信息，也就是及时判断。</p>
+<p><img src="/images/image-20260424172709372.png" class="lazyload" data-srcset="/images/image-20260424172709372.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="image-20260424172709372"></p>
+</li>
+<li><p>Smoothing: computes $P(Z_t \mid X_{1:T} )$ offline</p>
+<p>拥有全部的观测信息，也就是事后回顾。</p>
+<p><img src="/images/image-20260424173000407.png" class="lazyload" data-srcset="/images/image-20260424173000407.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="image-20260424173000407"></p>
+</li>
+<li><p>MAP inference: computes $\text{arg } \underset{Z_{1:T}}{\text{max}}P(Z_{1:T} \mid X_{1:T} )$</p>
+<p><img src="/images/image-20260424172930853.png" class="lazyload" data-srcset="/images/image-20260424172930853.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="image-20260424172930853"></p>
+</li>
+</ul>
+<h5 id="Filtering"><a href="#Filtering" class="headerlink" title="Filtering"></a><strong>Filtering</strong></h5><p>computes $P(Z_t \mid X_{1:t} )$.</p>
+<p><strong>Forward Algorithm</strong>:</p>
+<p>记</p>
+<script type="math/tex; mode=display">
+\alpha_t(k) := P(Z_t = k, X_{1:t})
+\quad \text{and} \quad
+\alpha_t := 
+\begin{bmatrix}
+\alpha_t(1)\\
+\vdots \\
+\alpha_t(K)\\
+\end{bmatrix}</script><p>根据Bayes rule：</p>
+<script type="math/tex; mode=display">
+\begin{align*}
+P(Z_t=k \mid X_{1:t})
+&=
+\frac{P(Z_t=k, X_{1:t})}
+{\sum_{j=1}^{K} P(Z_t=j, X_{1:t})} \\
+&= \frac{\alpha_t(k)}
+{\mathrm{sum}(\boldsymbol{\alpha}_t)}
+\end{align*}</script><p>Forward Algorithm主要就分2步：</p>
+<ol>
+<li><p><strong>计算$\alpha_1$（initialisation）</strong>：</p>
+<script type="math/tex; mode=display">
+\begin{align*}
+\alpha_1(k)
+&= P(Z_1=k, X_1) \\
+&= P(Z_1=k)P(X_1 \mid Z_1=k) \\
+&= \pi_k B_{k x_1}
+\end{align*}</script><p><br></p>
+</li>
+<li><p><strong>给定$\alpha_t$，计算$\alpha_t$（recursion）</strong>：</p>
+<script type="math/tex; mode=display">
+\begin{align*}
+\alpha_{t+1}(k)
+&= P(Z_{t+1}=k, X_{1:t+1}) \\
+&= P(X_{t+1}\mid Z_{t+1}=k, X_{1:t})
+   P(Z_{t+1}=k, X_{1:t}) \\
+&= P(X_{t+1}\mid Z_{t+1}=k)
+   \sum_{j=1}^{K}
+   P(Z_{t+1}=k, Z_t=j, X_{1:t}) \\
+&= P(X_{t+1}\mid Z_{t+1}=k)
+   \sum_{j=1}^{K}
+   P(Z_{t+1}=k \mid Z_t=j, X_{1:t})
+   P(Z_t=j, X_{1:t}) \\
+&= B_{k(x_{t+1})}
+   \sum_{j=1}^{K}
+   A_{jk}\alpha_t(j)
+\end{align*}</script><p>写成矩阵的话就是：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{\alpha}_{t+1}
+=
+\mathbf{B}_{:(x_{t+1})}
+\odot
+\left(A^T\boldsymbol{\alpha}_t\right)</script><script type="math/tex; mode=display">
+\begin{bmatrix}
+\alpha_{t+1}(1) \\
+\alpha_{t+1}(2) \\
+\vdots \\
+\alpha_{t+1}(K)
+\end{bmatrix}
+=
+\begin{bmatrix}
+B(1,x_{t+1}) \\
+B(2,x_{t+1}) \\
+\vdots \\
+B(K,x_{t+1})
+\end{bmatrix}
+\odot
+\left(
+A^T
+\begin{bmatrix}
+\alpha_t(1) \\
+\alpha_t(2) \\
+\vdots \\
+\alpha_t(K)
+\end{bmatrix}
+\right)</script><p>（其中$\odot$ denotes the Hadamard product：$(A \odot B)_{ij} = (A)_{ij}(B)_{ij}.$）</p>
+</li>
+</ol>
+<p>计算$\alpha_{1:T}$的复杂度为$O(TK^2)$。</p>
+<p><br></p>
+<h5 id="Smoothing"><a href="#Smoothing" class="headerlink" title="Smoothing"></a><strong>Smoothing</strong></h5><p>computes $P(Z_t \mid X_{1:T} )$ .</p>
+<p><strong>Forward-Backward Algorithm</strong>：</p>
+<p>在之前forward的基础上再定义一个$\beta$：</p>
+<script type="math/tex; mode=display">
+\beta_t(k) := P(X_{t+1:T}\mid Z_t=k)
+\quad \text{and} \quad
+\boldsymbol{\beta}_t =
+\begin{bmatrix}
+\beta_t(1) \\
+\vdots \\
+\beta_t(K)
+\end{bmatrix}</script><p>那么根据Bayes就有：</p>
+<script type="math/tex; mode=display">
+\begin{align*}
+P(Z_t=k \mid X_{1:T})
+&=
+\frac{
+P(Z_t=k, X_{1:t})P(X_{t+1:T}\mid Z_t=k)
+}{
+\sum_{j=1}^{K} P(Z_t=j, X_{1:T})
+} \\
+&\propto \alpha_t(k)\beta_t(k)
+\end{align*}</script><p>Backward Algorithm也分2步：</p>
+<ul>
+<li><p><strong>计算$\beta_T$（initialisation）</strong>：</p>
+<script type="math/tex; mode=display">
+\beta_T(k)= 1</script><p>因为在$T$的时候：</p>
+<script type="math/tex; mode=display">
+P(Z_t=T \mid X_{1:T})\propto \alpha_T(k)\beta_T(k)</script><p>$\alpha_T(k)$已经捕获了所有已知信息了，所以$\beta_T(k)$就需要是个常量。</p>
+<p><br></p>
+</li>
+<li><p><strong>给定$\beta_{t+1}$，计算$\beta_t$（recursion）</strong>：</p>
+<script type="math/tex; mode=display">
+\begin{align*}
+\beta_t(j)
+&= P(X_{t+1:T}\mid Z_t=j) \\
+&= \sum_{k=1}^{K}
+P(X_{t+1:T}, Z_{t+1}=k \mid Z_t=j) \\
+&= \sum_{k=1}^{K}
+P(X_{t+1}, Z_{t+1}=k \mid Z_t=j)
+P(X_{t+2:T}\mid Z_t=j, X_{t+1}, Z_{t+1}=k) \\
+&= \sum_{k=1}^{K}
+P(Z_{t+1}=k\mid Z_t=j)
+P(X_{t+1}\mid Z_{t+1}=k, Z_t=j)
+P(X_{t+2:T}\mid Z_{t+1}=k) \\
+&= \sum_{k=1}^{K}
+A_{jk}B_{k x_{t+1}}\beta_{t+1}(k)
+\end{align*}</script><p>写成矩阵的话就是：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{\beta}_t
+=
+A\left(
+\mathbf{B}_{:(x_{t+1})}
+\odot
+\boldsymbol{\beta}_{t+1}
+\right)</script><script type="math/tex; mode=display">
+\begin{bmatrix}
+\beta_t(1) \\
+\beta_t(2) \\
+\vdots \\
+\beta_t(K)
+\end{bmatrix}
+=
+A
+\left(
+\begin{bmatrix}
+B(1,x_{t+1}) \\
+B(2,x_{t+1}) \\
+\vdots \\
+B(K,x_{t+1})
+\end{bmatrix}
+\odot
+\begin{bmatrix}
+\beta_{t+1}(1) \\
+\beta_{t+1}(2) \\
+\vdots \\
+\beta_{t+1}(K)
+\end{bmatrix}
+\right)</script></li>
+</ul>
+<p>计算$\beta_{1:T}$的复杂度也为$O(TK^2)$。</p>
+<p>最后计算</p>
+<script type="math/tex; mode=display">
+\gamma_t(k) := P(Z_t=k \mid X_{1:T})
+=
+\frac{\alpha_t(k)\beta_t(k)}
+{\sum_s \alpha_t(s)\beta_t(s)}</script><p>即可。</p>
+<h5 id="MAP-inference"><a href="#MAP-inference" class="headerlink" title="MAP inference"></a><strong>MAP inference</strong></h5><p><img src="/images/image-20260425000853114.png" class="lazyload" data-srcset="/images/image-20260425000853114.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="image-20260425000853114"></p>
+<h4 id="Parameter-Learning"><a href="#Parameter-Learning" class="headerlink" title="Parameter Learning"></a><strong>Parameter Learning</strong></h4>
   </div>
   
   
@@ -3175,7 +3385,7 @@ A =
 
 
   <div class='content'>
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Sequential-Data-Temporal-Data"><span class="toc-number">1.</span> <span class="toc-text">Sequential Data &#x2F; Temporal Data</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Autoregressive-Models"><span class="toc-number">1.1.</span> <span class="toc-text">Autoregressive Models</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Motivation-amp-Definitions"><span class="toc-number">1.1.1.</span> <span class="toc-text">Motivation &amp; Definitions</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E5%AD%A6%E4%B9%A0%EF%BC%88Parameter-learning%EF%BC%89"><span class="toc-number">1.1.2.</span> <span class="toc-text">参数学习（Parameter learning）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Stationary"><span class="toc-number">1.1.3.</span> <span class="toc-text">Stationary</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Markov-Chains"><span class="toc-number">1.2.</span> <span class="toc-text">Markov Chains</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E5%AD%A6%E4%B9%A0%EF%BC%88Parameter-learning%EF%BC%89-1"><span class="toc-number">1.3.</span> <span class="toc-text">参数学习（Parameter learning）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hidden-Markov-Models"><span class="toc-number">1.4.</span> <span class="toc-text">Hidden Markov Models</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Sequential-Data-Temporal-Data"><span class="toc-number">1.</span> <span class="toc-text">Sequential Data &#x2F; Temporal Data</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Autoregressive-Models"><span class="toc-number">1.1.</span> <span class="toc-text">Autoregressive Models</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Motivation-amp-Definitions"><span class="toc-number">1.1.1.</span> <span class="toc-text">Motivation &amp; Definitions</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E5%AD%A6%E4%B9%A0%EF%BC%88Parameter-learning%EF%BC%89"><span class="toc-number">1.1.2.</span> <span class="toc-text">参数学习（Parameter learning）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Stationary"><span class="toc-number">1.1.3.</span> <span class="toc-text">Stationary</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Markov-Chains"><span class="toc-number">1.2.</span> <span class="toc-text">Markov Chains</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E5%AD%A6%E4%B9%A0%EF%BC%88Parameter-learning%EF%BC%89-1"><span class="toc-number">1.2.1.</span> <span class="toc-text">参数学习（Parameter learning）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hidden-Markov-Models"><span class="toc-number">1.3.</span> <span class="toc-text">Hidden Markov Models</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Inference"><span class="toc-number">1.3.1.</span> <span class="toc-text">Inference</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Filtering"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">Filtering</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Smoothing"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">Smoothing</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#MAP-inference"><span class="toc-number">1.3.1.3.</span> <span class="toc-text">MAP inference</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Parameter-Learning"><span class="toc-number">1.3.2.</span> <span class="toc-text">Parameter Learning</span></a></li></ol></li></ol></li></ol>
   </div>
 </section>
 
@@ -3844,7 +4054,7 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
 </script>
 
 
-  <script type="application/ld+json">[{"@context":"https://schema.org.cn","@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"https://schema.org.cn","@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","sameAs":["https://github.com/volantis-x"],"description":"hi"},{"@context":"https://schema.org.cn","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https://archerui.github.io/","name":"Hexo"}},{"@type":"ListItem","position":2,"item":{"@id":"https://archerui.github.io/categories/AI/","name":"AI"}},{"@type":"ListItem","position":3,"item":{"@id":"https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/","name":"Machine Learning for Graphs and Sequential Data"}}]},{"@context":"https://schema.org.cn","@type":"WebSite","name":"Hexo","url":"https://archerui.github.io/","keywords":null,"description":"hi","author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","description":"hi"},"publisher":{"@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"https://archerui.github.io?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"https://schema.org.cn","@type":"BlogPosting","headline":"Machine Learning for Graphs and Sequential Data","description":"Machine Learning for Graphs and Sequential Data","inLanguage":"en","mainEntityOfPage":{"@type":"WebPage","@id":"https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/"},"author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/"},"publisher":{"@type":"Organization","name":"Hexo","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/","wordCount":47,"datePublished":"2026-04-19T22:14:35.000Z","dateModified":"2026-04-22T14:59:25.881Z","articleSection":"AI","keywords":"机器学习,Machine Learning,AI","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
+  <script type="application/ld+json">[{"@context":"https://schema.org.cn","@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"https://schema.org.cn","@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","sameAs":["https://github.com/volantis-x"],"description":"hi"},{"@context":"https://schema.org.cn","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https://archerui.github.io/","name":"Hexo"}},{"@type":"ListItem","position":2,"item":{"@id":"https://archerui.github.io/categories/AI/","name":"AI"}},{"@type":"ListItem","position":3,"item":{"@id":"https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/","name":"Machine Learning for Graphs and Sequential Data"}}]},{"@context":"https://schema.org.cn","@type":"WebSite","name":"Hexo","url":"https://archerui.github.io/","keywords":null,"description":"hi","author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","description":"hi"},"publisher":{"@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"https://archerui.github.io?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"https://schema.org.cn","@type":"BlogPosting","headline":"Machine Learning for Graphs and Sequential Data","description":"Machine Learning for Graphs and Sequential Data","inLanguage":"en","mainEntityOfPage":{"@type":"WebPage","@id":"https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/"},"author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/"},"publisher":{"@type":"Organization","name":"Hexo","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/","wordCount":47,"datePublished":"2026-04-19T22:14:35.000Z","dateModified":"2026-04-24T22:08:58.475Z","articleSection":"AI","keywords":"机器学习,Machine Learning,AI","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
 
 
 
