@@ -49,7 +49,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png">
 <meta property="article:published_time" content="2026-04-19T22:14:35.000Z">
-<meta property="article:modified_time" content="2026-04-25T08:17:15.561Z">
+<meta property="article:modified_time" content="2026-04-29T21:42:55.674Z">
 <meta property="article:tag" content="机器学习">
 <meta property="article:tag" content="Machine Learning">
 <meta property="article:tag" content="AI">
@@ -2248,7 +2248,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
     root: '/',
     debug: "env",
     default: {"avatar":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/avatar/round/3442075.svg","link":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/link/8f277b4ee0ecd.svg","cover":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/cover/76b86c0226ffd.svg","image":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/image/2659360.svg"},
-    lastupdate: new Date(1777189402782),
+    lastupdate: new Date(1777499028650),
     cdn: {
       izitoast_css: 'https://unpkg.com/izitoast@1.4.0/dist/css/iziToast.min.css',
       izitoast_js: 'https://unpkg.com/izitoast@1.4.0/dist/js/iziToast.min.js',
@@ -2722,10 +2722,10 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
           
         
           
-            <div class="new-meta-item date" itemprop="dateModified" datetime="2026-04-25T10:17:15+02:00">
+            <div class="new-meta-item date" itemprop="dateModified" datetime="2026-04-29T23:42:55+02:00">
   <a class='notlink'>
     <i class="fa-solid fa-edit fa-fw" aria-hidden="true"></i>
-    <p>Last UpdatedApr 25, 2026</p>
+    <p>Last UpdatedApr 29, 2026</p>
   </a>
 </div>
 
@@ -3378,7 +3378,110 @@ N(X_t\mid \mu_i,\sigma_i^2 \cdot I)
 <li><strong>在 GMM 里，不同观测样本$X_t$是独立的（independent）</strong></li>
 <li><strong>在 HMM 里，观测 $X_t$ 在给定隐藏状态之后是条件独立的（conditional independent given $Z$）</strong></li>
 </ul>
+<h3 id="Neural-Network-Approches"><a href="#Neural-Network-Approches" class="headerlink" title="Neural Network Approches"></a><strong>Neural Network Approches</strong></h3><h4 id="Word-Vectors"><a href="#Word-Vectors" class="headerlink" title="Word Vectors"></a><strong>Word Vectors</strong></h4><p>由于神经网络不能直接处理单词，所以我们需要先把词表示成向量，方便后续计算处理。</p>
+<p>最简单的想法就是one-hot encoding：假设有个单词数量为n的单词表，把每个单词转成一个维度为n的向量（其中有且仅有一项等于1）。但它有三个问题：维度高、稀疏、假设词之间相互独立。</p>
+<p>于是就引出了 <strong>word vectors / embeddings</strong>：相似词的向量应该接近，比如 “hotel” 和 “motel”，”man”和”woman”，”walking”和”walked”。这基于分布式假设：<strong>出现在相似上下文中的词，通常有相似含义</strong>。</p>
+<p><br></p>
+<p>有2种常见的获取word vectors的方法：</p>
+<p><strong>1. Co-occurence Matrix + SVD</strong>：</p>
+<p>这个方法偏<strong>统计</strong>。它的初始想法很直观：一个词的含义可以通过“它经常和哪些词一起出现”来表示。</p>
+<p>先统计一个词附近出现哪些词，得到一个co-occurrence matrix。然后再用SVD把高维稀疏向量压缩成低维稠密向量。</p>
+<p>优点是相似的单词会得到相似的向量。</p>
+<p>缺点是计算慢，而且新词不好加入。</p>
+<p><strong>2. Word2Vec</strong></p>
+<p>这种方法偏<strong>预测</strong>。</p>
+<p>先设计一个预测任务，然后用神经网络学习词向量。</p>
+<p>来看2个经典模型：</p>
+<p>1. CBOW (Continuous Bag-of-Words)：</p>
+<p>给定一个词周围的上下文词（window），预测中间词。</p>
+<p>但是这种方法对稀有词不太好，因为稀有词出现次数非常少，模型很少有机会把它作为要预测的目标词，所以不容易学好它的向量。</p>
+<p><strong>2. Skip-gram：</strong></p>
+<p>给定中心词，预测它周围的上下文词。</p>
+<p>它对稀有词更友好（可以这样理解：如果一个 rare word 出现了，模型会强迫自己用这个 rare word 去预测它的上下文。这样模型必须理解这个 rare word 通常出现在什么环境中，因此更容易学到它的含义。），但训练起来也会更慢。</p>
+<p><strong>来看一下具体的结构：</strong></p>
+<p>假设词表大小是$N$，并且每个词一开始用one-hot vector来表示。</p>
+<p>Embedding则是通过一个矩阵$U \in \mathbb{R}^{N \times D}$来实现的。由于所有输入都是one-hot vector，所有相当于$U$的每一行都是对应一个单词的embedding结果的。</p>
+<p>在此基础上还需要一个矩阵$V \in \mathbb{R}^{D \times N}$，用来把中心词 embedding 转换成对整个词表的预测分数。最后再套上softmax就会得到一个上下文单词的概率分布。</p>
+<p>也就是整体流程是这样的：</p>
+<script type="math/tex; mode=display">
+\text{softmax}(x_i^T \cdot U \cdot V) = \text{softmax}(u_i V)</script><p><img src="/images/image-20260429222523150.png" class="lazyload" data-srcset="/images/image-20260429222523150.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="image-20260429222523150"></p>
+<p>假设$S=[x_{i-l},\ldots,x_{i-1},x_{i+1},\ldots,x_{i+l}]$是当前$x_i$的大小为$l$的window，$\theta = (U,V)$为模型参数，那么我们的训练目标就是最大化这个期望值：</p>
+<script type="math/tex; mode=display">
+\max_{\theta}\mathbb{E}\left[P(S\mid x_i,\theta)\right]
+=
+\min_{\theta}\left(-\mathbb{E}\left[P(S\mid x_i,\theta)\right]\right)</script><p>其中</p>
+<script type="math/tex; mode=display">
+\begin{align*}
+P(S\mid x_i,\theta)
+=
+\prod_{x_k\in S}
+P(x_k\mid x_i,\theta)
 
+= \prod_{x_k\in S}
+\operatorname{softmax}(u_i V)_k
+\end{align*}</script><p>但是注意到，softmax的形式是：</p>
+<script type="math/tex; mode=display">
+P(x_k \mid x_i,\theta)
+=
+\frac{
+\exp(u_i v_k^T)
+}{
+\sum_{l=1}^{N}\exp(u_i v_l^T)
+}</script><p>为了计算这个分母我们需要遍历整个单词表，当单词表很大的时候会非常低效。</p>
+<p>所以可以用<strong>negative sampling</strong>技巧：我们不再把问题看成从整个词表中预测正确上下文词，而是把它变成一个二分类问题：判断一个词对是不是真实的上下文关系。</p>
+<p>利用（最小化）这个Loss来训练模型：</p>
+<script type="math/tex; mode=display">
+L
+=
+\log\left(P(x_p\mid x_i,\theta)\right)
++
+\log\left(1-P(x_n\mid x_i,\theta)\right)</script><p>并且用sigmoid代替softmax：</p>
+<script type="math/tex; mode=display">
+P(x_k\mid x_i,\theta)
+=
+\operatorname{sigmoid}(u_i v_k^T)</script><p>如果两个词经常一起出现，它们的向量点积应该大，sigmoid 后接近 1。<br>如果两个词很少一起出现，它们的向量点积应该小，sigmoid 后接近 0。</p>
+<h4 id="RNNs"><a href="#RNNs" class="headerlink" title="RNNs"></a><strong>RNNs</strong></h4><p>我们刚才看了如何处理单个单词。但我们该怎么处理一整句话、一个音频片段、一个时间序列呢？尤其是它们的长度都各不相同。</p>
+<p>答案就是<strong>Recurrent Neural Networks (RNNs)</strong>。它的基本想法就是用一个 hidden state 来总结到目前为止读过的序列信息。</p>
+<p>RNN可以处理多种任务：</p>
+<p><img src="/images/image-20260429231532875.png" class="lazyload" data-srcset="/images/image-20260429231532875.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="image-20260429231532875"></p>
+<p>来看<strong>正式的定义</strong>：</p>
+<p>假设输入是$\{x^{(1)},\ldots,x^{(T)}\}$，并且输出$\{y^{(1)},\ldots,y^{(T)}\}$。我们现在希望知道</p>
+<script type="math/tex; mode=display">
+P(y^{(t)}\mid x^{(1)},\ldots,x^{(t)})</script><p>的概率分布。</p>
+<p>所以我们用 $h^{(t-1)}$表示/记录$\{x^{(1)},\ldots,x^{(t-1)}\}$的信息。</p>
+<p>具体的更新公式：</p>
+<script type="math/tex; mode=display">
+\begin{align*}
+z^{(t)} &= W h^{(t-1)} + Ux^{(t)} + b \\
+h^{(t)} &= \tanh(z^{(t)}) \\
+o^{(t)} &= Vh^{(t)} \\
+\hat{y}^{(t)} &= \operatorname{softmax}(o^{(t)})
+\end{align*}</script><p><img src="/images/image-20260429233633786.png" class="lazyload" data-srcset="/images/image-20260429233633786.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="image-20260429233633786"></p>
+<p>训练的时候关注negative log-likelihood：</p>
+<script type="math/tex; mode=display">
+\begin{align*}
+L
+&=
+-\log
+\prod_t
+p_{\mathrm{model}}
+\left(
+y^{(t)}\mid x^{(1)},\ldots,x^{(t)}
+\right) \\
+&=
+-\sum_t
+\log
+p_{\mathrm{model}}
+\left(
+y^{(t)}\mid x^{(1)},\ldots,x^{(t)}
+\right) \\
+&=
+-\sum_t L^{(t)}
+\end{align*}</script><p><br></p>
+<p>当我们将RNN展开（unrolling）：</p>
+<p><img src="/images/image-20260429234233722.png" class="lazyload" data-srcset="/images/image-20260429234233722.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="image-20260429234233722"></p>
+<p>就会发现它像一个很深的神经网络，所以可以用反向传播训练。</p>
+<h4 id="Non-Recurrent-Modesl-ConvNets-Transformer"><a href="#Non-Recurrent-Modesl-ConvNets-Transformer" class="headerlink" title="Non-Recurrent Modesl (ConvNets, Transformer)"></a><strong>Non-Recurrent Modesl (ConvNets, Transformer)</strong></h4><h4 id="Stuctured-State-Space-Models"><a href="#Stuctured-State-Space-Models" class="headerlink" title="Stuctured State Space Models"></a><strong>Stuctured State Space Models</strong></h4>
   </div>
   
   
@@ -3536,7 +3639,7 @@ N(X_t\mid \mu_i,\sigma_i^2 \cdot I)
 
 
   <div class='content'>
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Sequential-Data-Temporal-Data"><span class="toc-number">1.</span> <span class="toc-text">Sequential Data &#x2F; Temporal Data</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Autoregressive-Models"><span class="toc-number">1.1.</span> <span class="toc-text">Autoregressive Models</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Motivation-amp-Definitions"><span class="toc-number">1.1.1.</span> <span class="toc-text">Motivation &amp; Definitions</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E5%AD%A6%E4%B9%A0%EF%BC%88Parameter-learning%EF%BC%89"><span class="toc-number">1.1.2.</span> <span class="toc-text">参数学习（Parameter learning）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Stationary"><span class="toc-number">1.1.3.</span> <span class="toc-text">Stationary</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Markov-Chains"><span class="toc-number">1.2.</span> <span class="toc-text">Markov Chains</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E5%AD%A6%E4%B9%A0%EF%BC%88Parameter-learning%EF%BC%89-1"><span class="toc-number">1.2.1.</span> <span class="toc-text">参数学习（Parameter learning）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hidden-Markov-Models"><span class="toc-number">1.3.</span> <span class="toc-text">Hidden Markov Models</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Inference"><span class="toc-number">1.3.1.</span> <span class="toc-text">Inference</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Filtering"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">Filtering</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Smoothing"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">Smoothing</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#MAP-inference"><span class="toc-number">1.3.1.3.</span> <span class="toc-text">MAP inference</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Parameter-Learning"><span class="toc-number">1.3.2.</span> <span class="toc-text">Parameter Learning</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Continuous-Data"><span class="toc-number">1.3.3.</span> <span class="toc-text">Continuous Data</span></a></li></ol></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Sequential-Data-Temporal-Data"><span class="toc-number">1.</span> <span class="toc-text">Sequential Data &#x2F; Temporal Data</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Autoregressive-Models"><span class="toc-number">1.1.</span> <span class="toc-text">Autoregressive Models</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Motivation-amp-Definitions"><span class="toc-number">1.1.1.</span> <span class="toc-text">Motivation &amp; Definitions</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E5%AD%A6%E4%B9%A0%EF%BC%88Parameter-learning%EF%BC%89"><span class="toc-number">1.1.2.</span> <span class="toc-text">参数学习（Parameter learning）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Stationary"><span class="toc-number">1.1.3.</span> <span class="toc-text">Stationary</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Markov-Chains"><span class="toc-number">1.2.</span> <span class="toc-text">Markov Chains</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E5%AD%A6%E4%B9%A0%EF%BC%88Parameter-learning%EF%BC%89-1"><span class="toc-number">1.2.1.</span> <span class="toc-text">参数学习（Parameter learning）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hidden-Markov-Models"><span class="toc-number">1.3.</span> <span class="toc-text">Hidden Markov Models</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Inference"><span class="toc-number">1.3.1.</span> <span class="toc-text">Inference</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Filtering"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">Filtering</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Smoothing"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">Smoothing</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#MAP-inference"><span class="toc-number">1.3.1.3.</span> <span class="toc-text">MAP inference</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Parameter-Learning"><span class="toc-number">1.3.2.</span> <span class="toc-text">Parameter Learning</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Continuous-Data"><span class="toc-number">1.3.3.</span> <span class="toc-text">Continuous Data</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Neural-Network-Approches"><span class="toc-number">1.4.</span> <span class="toc-text">Neural Network Approches</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Word-Vectors"><span class="toc-number">1.4.1.</span> <span class="toc-text">Word Vectors</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#RNNs"><span class="toc-number">1.4.2.</span> <span class="toc-text">RNNs</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Non-Recurrent-Modesl-ConvNets-Transformer"><span class="toc-number">1.4.3.</span> <span class="toc-text">Non-Recurrent Modesl (ConvNets, Transformer)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Stuctured-State-Space-Models"><span class="toc-number">1.4.4.</span> <span class="toc-text">Stuctured State Space Models</span></a></li></ol></li></ol></li></ol>
   </div>
 </section>
 
@@ -4205,7 +4308,7 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
 </script>
 
 
-  <script type="application/ld+json">[{"@context":"https://schema.org.cn","@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"https://schema.org.cn","@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","sameAs":["https://github.com/volantis-x"],"description":"hi"},{"@context":"https://schema.org.cn","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https://archerui.github.io/","name":"Hexo"}},{"@type":"ListItem","position":2,"item":{"@id":"https://archerui.github.io/categories/AI/","name":"AI"}},{"@type":"ListItem","position":3,"item":{"@id":"https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/","name":"Machine Learning for Graphs and Sequential Data"}}]},{"@context":"https://schema.org.cn","@type":"WebSite","name":"Hexo","url":"https://archerui.github.io/","keywords":null,"description":"hi","author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","description":"hi"},"publisher":{"@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"https://archerui.github.io?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"https://schema.org.cn","@type":"BlogPosting","headline":"Machine Learning for Graphs and Sequential Data","description":"Machine Learning for Graphs and Sequential Data","inLanguage":"en","mainEntityOfPage":{"@type":"WebPage","@id":"https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/"},"author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/"},"publisher":{"@type":"Organization","name":"Hexo","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/","wordCount":47,"datePublished":"2026-04-19T22:14:35.000Z","dateModified":"2026-04-25T08:17:15.561Z","articleSection":"AI","keywords":"机器学习,Machine Learning,AI","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
+  <script type="application/ld+json">[{"@context":"https://schema.org.cn","@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"https://schema.org.cn","@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","sameAs":["https://github.com/volantis-x"],"description":"hi"},{"@context":"https://schema.org.cn","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https://archerui.github.io/","name":"Hexo"}},{"@type":"ListItem","position":2,"item":{"@id":"https://archerui.github.io/categories/AI/","name":"AI"}},{"@type":"ListItem","position":3,"item":{"@id":"https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/","name":"Machine Learning for Graphs and Sequential Data"}}]},{"@context":"https://schema.org.cn","@type":"WebSite","name":"Hexo","url":"https://archerui.github.io/","keywords":null,"description":"hi","author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","description":"hi"},"publisher":{"@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"https://archerui.github.io?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"https://schema.org.cn","@type":"BlogPosting","headline":"Machine Learning for Graphs and Sequential Data","description":"Machine Learning for Graphs and Sequential Data","inLanguage":"en","mainEntityOfPage":{"@type":"WebPage","@id":"https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/"},"author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/"},"publisher":{"@type":"Organization","name":"Hexo","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/","wordCount":47,"datePublished":"2026-04-19T22:14:35.000Z","dateModified":"2026-04-29T21:42:55.674Z","articleSection":"AI","keywords":"机器学习,Machine Learning,AI","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
 
 
 
