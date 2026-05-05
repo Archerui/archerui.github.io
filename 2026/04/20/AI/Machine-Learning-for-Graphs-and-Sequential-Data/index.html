@@ -49,7 +49,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png">
 <meta property="article:published_time" content="2026-04-19T22:14:35.000Z">
-<meta property="article:modified_time" content="2026-05-04T22:30:37.824Z">
+<meta property="article:modified_time" content="2026-05-05T15:23:02.702Z">
 <meta property="article:tag" content="机器学习">
 <meta property="article:tag" content="Machine Learning">
 <meta property="article:tag" content="AI">
@@ -2248,7 +2248,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
     root: '/',
     debug: "env",
     default: {"avatar":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/avatar/round/3442075.svg","link":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/link/8f277b4ee0ecd.svg","cover":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/cover/76b86c0226ffd.svg","image":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/image/2659360.svg"},
-    lastupdate: new Date(1777933863865),
+    lastupdate: new Date(1777994701574),
     cdn: {
       izitoast_css: 'https://unpkg.com/izitoast@1.4.0/dist/css/iziToast.min.css',
       izitoast_js: 'https://unpkg.com/izitoast@1.4.0/dist/js/iziToast.min.js',
@@ -2722,7 +2722,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
           
         
           
-            <div class="new-meta-item date" itemprop="dateModified" datetime="2026-05-05T00:30:37+02:00">
+            <div class="new-meta-item date" itemprop="dateModified" datetime="2026-05-05T17:23:02+02:00">
   <a class='notlink'>
     <i class="fa-solid fa-edit fa-fw" aria-hidden="true"></i>
     <p>Last UpdatedMay 5, 2026</p>
@@ -3582,7 +3582,264 @@ h^{(t)}
 =
 \prod_{i=s}^{e}
 W\left(1-\left(h^{(i)}\right)^2\right)</script><p>$W$的连乘会导致这个梯度消失或者爆炸（vanish/explode），进而会导致RNN无法有效地更新/学习到信息。</p>
-<h4 id="Non-Recurrent-Modesl-ConvNets-Transformer"><a href="#Non-Recurrent-Modesl-ConvNets-Transformer" class="headerlink" title="Non-Recurrent Modesl (ConvNets, Transformer)"></a><strong>Non-Recurrent Modesl (ConvNets, Transformer)</strong></h4><h4 id="Stuctured-State-Space-Models"><a href="#Stuctured-State-Space-Models" class="headerlink" title="Stuctured State Space Models"></a><strong>Stuctured State Space Models</strong></h4>
+<p>为了解决这个问题我们需要完善目前的架构。</p>
+<h5 id="GRU-Gated-Recurrent-Unit"><a href="#GRU-Gated-Recurrent-Unit" class="headerlink" title="GRU (Gated Recurrent Unit)"></a><strong>GRU (Gated Recurrent Unit)</strong></h5><p>核心思想：不是每一步都完全覆盖 hidden state，而是引入gate来控制保留多少旧信息以及接受多少新信息。</p>
+<p>（有点类似residual NN的idea。）</p>
+<p>更新公式：</p>
+<script type="math/tex; mode=display">
+\begin{align*}
+z^{(t)}&= \sigma\left(W_z\left[h^{(t-1)},x^{(t)}\right]\right) &\text{update gate}\\
+r^{(t)}&= \sigma\left(W_r\left[h^{(t-1)},x^{(t)}\right]\right) &\text{reset gate}\\
+\tilde{h}^{(t)}&= \tanh\left( W\left[ r^{(t)}\odot h^{(t-1)},x^{(t)} \right] \right) &\text{candidate state}\\
+h^{(t)}&=\left(1-z^{(t)}\right)\odot h^{(t-1)}+z^{(t)}\odot \tilde{h}^{(t)} \\
+
+\end{align*}</script><p>其中$\odot$为elemente-wise product。</p>
+<p>update gate $z^{(t)}$会决定最后是保留更多的previous state还是新的candidate state。</p>
+<p>reset gate $r^{(t)}$则是决定计算新的candidate state时，参考多少之前的hidden state的信息。</p>
+<h5 id="LSTM-Long-Short-Term-Memory"><a href="#LSTM-Long-Short-Term-Memory" class="headerlink" title="LSTM (Long Short-Term Memory)"></a><strong>LSTM (Long Short-Term Memory)</strong></h5><p>更加强力的架构。我们在hidden state $h^{(t)}$的基础上再引入一个新的<strong>cell state</strong> $c^{(t)}$。</p>
+<ul>
+<li><p>Forget gate:</p>
+<script type="math/tex; mode=display">
+f^{(t)}
+=
+\sigma\left(
+W_f\left[h^{(t-1)},x^{(t)}\right]
+\right)</script><p>决定保留多少之前的cell state信息。</p>
+</li>
+<li><p>Input gate:</p>
+<script type="math/tex; mode=display">
+i^{(t)}
+=
+\sigma\left(
+W_i\left[h^{(t-1)},x^{(t)}\right]
+\right)</script><p>决定将多少新信息写入新的cell state。</p>
+</li>
+<li><p>Output gate:</p>
+<script type="math/tex; mode=display">
+o^{(t)}
+=
+\sigma\left(
+W_o\left[h^{(t-1)},x^{(t)}\right]
+\right)</script><p>决定更新hidden state时参考多少cell state的信息。</p>
+</li>
+<li><p>Update cell state:</p>
+<script type="math/tex; mode=display">
+c^{(t)}
+=
+f^{(t)}\odot c^{(t-1)}
++
+i^{(t)}\odot
+\tanh\left(
+W\left[h^{(t-1)},x^{(t)}\right]
+\right)</script></li>
+<li><p>Update hidden state using cell state:</p>
+<script type="math/tex; mode=display">
+h^{(t)}
+=
+o^{(t)}\odot \tanh\left(c^{(t)}\right)</script></li>
+</ul>
+<p><img src="/images/image-20260505095234723.png" class="lazyload" data-srcset="/images/image-20260505095234723.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="image-20260505095234723"></p>
+<h4 id="Non-Recurrent-Modesl-ConvNets-Transformer"><a href="#Non-Recurrent-Modesl-ConvNets-Transformer" class="headerlink" title="Non-Recurrent Modesl (ConvNets, Transformer)"></a><strong>Non-Recurrent Modesl (ConvNets, Transformer)</strong></h4><p>RNN的结构：</p>
+<script type="math/tex; mode=display">
+h^{(t)}
+=
+f\left(h^{(t-1)},x^{(t)}\right)</script><p>会带来2个问题：</p>
+<ul>
+<li>无法并行计算，因为每个hidden state都依赖前面的state</li>
+<li>无法保证长期</li>
+</ul>
+<p>但有些序列任务其实不一定需要完整历史，只需要一个固定范围的过去信息。</p>
+<h5 id="ConvNets-WaveNet"><a href="#ConvNets-WaveNet" class="headerlink" title="ConvNets/WaveNet"></a><strong>ConvNets/WaveNet</strong></h5><p>连续函数上的卷积是：</p>
+<script type="math/tex; mode=display">
+(f * g)(t)
+=
+\int_{-\infty}^{+\infty}
+f(\tau)g(t-\tau)\,d\tau</script><p>在图像处理中，我们常见2D（离散）卷积：</p>
+<script type="math/tex; mode=display">
+(K * I)(i,j)
+=
+\sum_m \sum_n
+I(i-m,j-n)K(m,n)</script><p>因为sequence是1维的，所以我们可以用1D的ConvNets。</p>
+<p>假设有一个长度为 $3$ 的卷积核：</p>
+<script type="math/tex; mode=display">
+[k_0,k_1,k_2]</script><p>对于序列：</p>
+<script type="math/tex; mode=display">
+x_1,x_2,x_3,x_4,x_5</script><p>普通1D卷积会在序列上滑动窗口。例如某个输出可能是：</p>
+<script type="math/tex; mode=display">
+y_t
+=
+k_0x_{t-2}
++
+k_1x_{t-1}
++
+k_2x_t</script><p>这和之前的autoregressive model非常像，但ConvNet可以叠很多层、加非线性，从而学习更复杂的模式。</p>
+<p><br></p>
+<p><strong>WaveNet</strong>是一个用 1D ConvNet 建模 speech / raw audio 的模型。它有两个关键设计：</p>
+<ol>
+<li><p><strong>Causal convolution</strong></p>
+<p>确保卷积只能看到之前的信息。</p>
+<p><img src="/images/image-20260505103617497.png" class="lazyload" data-srcset="/images/image-20260505103617497.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="image-20260505103617497"></p>
+</li>
+<li><p><strong>Dilated convolution</strong></p>
+<p>（在序列模型里，某个输出 $y_t$ 能看到多少个输入位置，就叫它的<strong>receptive field</strong>。）</p>
+<p>普通卷积看连续相邻输入：</p>
+<script type="math/tex; mode=display">
+x_t,x_{t-1},x_{t-2}</script><p>而 dilated convolution 会“隔着看”。</p>
+<p>比如 dilation $=2$ 时，可能看：</p>
+<script type="math/tex; mode=display">
+x_t,x_{t-2},x_{t-4}</script><p>dilation $=4$ 时，看：</p>
+<script type="math/tex; mode=display">
+x_t,x_{t-4},x_{t-8}</script><p>WaveNet常用的做法是每一层dilation翻倍：</p>
+<script type="math/tex; mode=display">
+1, 2, 4, 8, \ldots</script><p>这样receptive field会随着层数指数级增长。这样便可以只用少数层就能覆盖很长历史。</p>
+</li>
+</ol>
+<h5 id="Transformer-amp-Attention"><a href="#Transformer-amp-Attention" class="headerlink" title="Transformer&amp;Attention"></a><strong>Transformer&amp;Attention</strong></h5><p>Transformer 是非循环模型。它不像RNN那样一步一步更新hidden state，也不像ConvNet那样只看固定窗口，而是用<strong>attention</strong>让每个token可以直接和其他token交互。</p>
+<p>对于当前位置 $x_i$，模型会学习</p>
+<ul>
+<li>应该关注序列中哪些位置 $x_j$？</li>
+<li>每个位置关注多少？（权重 weight）</li>
+</ul>
+<p><img src="/images/image-20260505104618585.png" class="lazyload" data-srcset="/images/image-20260505104618585.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="image-20260505104618585"></p>
+<p>（attension中不同深浅的颜色代表不同的重要程度/权重）</p>
+<p>Attension有三个核心概念：</p>
+<script type="math/tex; mode=display">
+Q,\ K,\ V</script><p>也就是：</p>
+<ul>
+<li>Query</li>
+<li>Key</li>
+<li>Value</li>
+</ul>
+<p>可以用一个比喻理解：</p>
+<p><strong>Query</strong>：我在找什么？<br> <strong>Key</strong>：我有什么特征，可以被别人匹配？<br> <strong>Value</strong>：如果别人关注我，我实际提供什么信息？</p>
+<p><strong>attension的具体计算过程：</strong></p>
+<p>第一步，计算 $x_i$ 对每个 $x_j$ 的分数：</p>
+<script type="math/tex; mode=display">
+q_i = W_Q x_i</script><script type="math/tex; mode=display">
+\begin{align*}
+k_j = W_K x_j
+\end{align*}</script><script type="math/tex; mode=display">
+\mathrm{score}_{ij}
+=
+q_i k_j^T</script><p>分数越高，表示$x_i$越应该关注$x_j$。</p>
+<p>第二步，对这些分数做 scaling 和 softmax：</p>
+<script type="math/tex; mode=display">
+\alpha_{ij}
+=
+\operatorname{softmax}_j
+\left(
+\frac{q_i k_j^T}{\sqrt{d_k}}
+\right)</script><p>这里$\alpha_{ij}$是attention weight，表示位置$i$对位置$j$的关注程度。</p>
+<p>第三步，用这些权重加权value：</p>
+<script type="math/tex; mode=display">
+v_j = W_V x_j</script><script type="math/tex; mode=display">
+z_i
+=
+\sum_j
+\alpha_{ij}v_j</script><p>得到当前位置的新表示$z_i$。</p>
+<p>用矩阵的写法则是：</p>
+<script type="math/tex; mode=display">
+\begin{align*}
+Q &= XW_Q \\
+K &= XW_K \\
+V &= XW_V \\
+Z &=
+\operatorname{softmax}
+\left(
+\frac{QK^T}{\sqrt{d_k}}
+\right)
+V \\
+\end{align*}</script><p>其中$QK^T$是 $n \times n$ 的矩阵。</p>
+<p><br></p>
+<p>由于Attention本身无法察觉顺序，所以我们需要加入Positional Encoding，也就是给每个token的embedding加上或拼接一个表示位置的向量。</p>
+<p><br></p>
+<p>与RNN相比，Transformer有一个非常重要的特性：<strong>训练时可以并行</strong>。RNN必须按顺序处理每个token，因为每一步的输出都依赖上一步的隐藏状态；而Transformer没有这种时序依赖，可以一次性把整个序列喂进去同时计算。</p>
+<p>但这里有个问题——语言模型在预测某个token时，不应该”提前看到”它后面的内容，否则训练就失去意义了。解决办法是使用<strong>causal mask（因果掩码）</strong>：在注意力计算中，将每个位置右边的部分遮住，强制模型只能关注当前及之前的token。</p>
+<p>以训练句子”I like this movie”为例：</p>
+<ul>
+<li><code>I</code> 只能看 <code>I</code></li>
+<li><code>like</code> 只能看 <code>I, like</code></li>
+<li><code>this</code> 只能看 <code>I, like, this</code></li>
+<li><code>movie</code> 只能看 <code>I, like, this, movie</code></li>
+</ul>
+<p>这四个位置的计算<strong>在训练时是同时进行的</strong>，效率远高于RNN的逐步处理。</p>
+<p>不过，这种并行性只存在于训练阶段。<strong>推理时</strong>，由于每个新token都依赖前面已生成的结果，模型仍然只能一个token一个token地顺序输出。</p>
+<h4 id="Stuctured-State-Space-Models"><a href="#Stuctured-State-Space-Models" class="headerlink" title="Stuctured State Space Models"></a><strong>Stuctured State Space Models</strong></h4><p>先来对比一下前面的RNN和Transformer架构：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Training 训练</th>
+<th>Inference 推理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RNN</td>
+<td>慢</td>
+<td>快（只需要根据当前的hidden state来计算下一个hidden state）</td>
+</tr>
+<tr>
+<td>Transformer</td>
+<td>快（可并行）</td>
+<td>慢（复杂度差不多是序列长度的平方）</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>那么有没有办法可以设计一个架构同时拥有它们2个的优点呢？</p>
+<h5 id="State-space-model"><a href="#State-space-model" class="headerlink" title="State-space model"></a><strong>State-space model</strong></h5><p>考虑输入$u_k \in \mathbb{R}$，输出$y_k \in \mathbb{R}$，以及$\bar{A}\in\mathbb{R}^{N\times N}, \bar{B}\in\mathbb{R}^{N\times 1}, \bar{C}\in\mathbb{R}^{1\times N}$。</p>
+<script type="math/tex; mode=display">
+x_k
+=
+\bar{A}x_{k-1}
++
+\bar{B}u_k</script><script type="math/tex; mode=display">
+y_k
+=
+\bar{C}x_k</script><p><img src="/images/image-20260505170549883.png" class="lazyload" data-srcset="/images/image-20260505170549883.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="image-20260505170549883"></p>
+<p>注意到$y_k$可以写成</p>
+<script type="math/tex; mode=display">
+\begin{align*}
+y_k
+&=\bar{C}\bar{A}^k\bar{B}u_0+\cdots+\bar{C}\bar{A}\bar{B}u_{k-1}+\bar{C}\bar{B}u_k \\
+&= K_0 u_0+\cdots + K_{k-1} u_{k-1}+K_k u_k \\
+\end{align*}</script><p>等价于$\bar{K}$和$u$的卷积：</p>
+<script type="math/tex; mode=display">
+\bar{K}
+=
+\left[
+\bar{C}\bar{B},
+\bar{C}\bar{A}\bar{B},
+\bar{C}\bar{A}^2\bar{B},
+\ldots,
+\bar{C}\bar{A}^{L-1}\bar{B}
+\right]</script><p>重点来了，目前的这个架构有着2种等价的形式，所以同时拥有着2种形式的优势：</p>
+<ul>
+<li><p><strong>递归</strong></p>
+<script type="math/tex; mode=display">
+\begin{align*}
+x_k
+&=
+\bar{A}x_{k-1}
++
+\bar{B}u_k \\
+
+y_k
+&=
+\bar{C}x_k
+\end{align*}</script><p><strong>推理时很高效，复杂度为线性。</strong></p>
+</li>
+<li><p><strong>卷积</strong></p>
+<script type="math/tex; mode=display">
+y = \bar{K} * u</script><p><strong>训练时可以并行，因为整段序列的卷积可以一次算。</strong></p>
+</li>
+</ul>
+<p>但是光这样还不够，因为在计算$\bar{K}$时实际上需要计算$\bar{A}^{L-1}$，复杂度依旧很高。</p>
+<p>所以我们可以挑选合适的$\bar{A}$的结构来确保复杂度不会太高。</p>
+<h5 id="S4-model"><a href="#S4-model" class="headerlink" title="S4 model"></a><strong>S4 model</strong></h5><p>S4 (<strong>S</strong>tructed <strong>S</strong>tate <strong>S</strong>pace for <strong>S</strong>equences) model。</p>
+
   </div>
   
   
@@ -3740,7 +3997,7 @@ W\left(1-\left(h^{(i)}\right)^2\right)</script><p>$W$的连乘会导致这个梯
 
 
   <div class='content'>
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Sequential-Data-Temporal-Data"><span class="toc-number">1.</span> <span class="toc-text">Sequential Data &#x2F; Temporal Data</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Autoregressive-Models"><span class="toc-number">1.1.</span> <span class="toc-text">Autoregressive Models</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Motivation-amp-Definitions"><span class="toc-number">1.1.1.</span> <span class="toc-text">Motivation &amp; Definitions</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E5%AD%A6%E4%B9%A0%EF%BC%88Parameter-learning%EF%BC%89"><span class="toc-number">1.1.2.</span> <span class="toc-text">参数学习（Parameter learning）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Stationary"><span class="toc-number">1.1.3.</span> <span class="toc-text">Stationary</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Markov-Chains"><span class="toc-number">1.2.</span> <span class="toc-text">Markov Chains</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E5%AD%A6%E4%B9%A0%EF%BC%88Parameter-learning%EF%BC%89-1"><span class="toc-number">1.2.1.</span> <span class="toc-text">参数学习（Parameter learning）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hidden-Markov-Models"><span class="toc-number">1.3.</span> <span class="toc-text">Hidden Markov Models</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Inference"><span class="toc-number">1.3.1.</span> <span class="toc-text">Inference</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Filtering"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">Filtering</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Smoothing"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">Smoothing</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#MAP-inference"><span class="toc-number">1.3.1.3.</span> <span class="toc-text">MAP inference</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Parameter-Learning"><span class="toc-number">1.3.2.</span> <span class="toc-text">Parameter Learning</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Continuous-Data"><span class="toc-number">1.3.3.</span> <span class="toc-text">Continuous Data</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Neural-Network-Approches"><span class="toc-number">1.4.</span> <span class="toc-text">Neural Network Approches</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Word-Vectors"><span class="toc-number">1.4.1.</span> <span class="toc-text">Word Vectors</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#RNNs"><span class="toc-number">1.4.2.</span> <span class="toc-text">RNNs</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Non-Recurrent-Modesl-ConvNets-Transformer"><span class="toc-number">1.4.3.</span> <span class="toc-text">Non-Recurrent Modesl (ConvNets, Transformer)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Stuctured-State-Space-Models"><span class="toc-number">1.4.4.</span> <span class="toc-text">Stuctured State Space Models</span></a></li></ol></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Sequential-Data-Temporal-Data"><span class="toc-number">1.</span> <span class="toc-text">Sequential Data &#x2F; Temporal Data</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Autoregressive-Models"><span class="toc-number">1.1.</span> <span class="toc-text">Autoregressive Models</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Motivation-amp-Definitions"><span class="toc-number">1.1.1.</span> <span class="toc-text">Motivation &amp; Definitions</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E5%AD%A6%E4%B9%A0%EF%BC%88Parameter-learning%EF%BC%89"><span class="toc-number">1.1.2.</span> <span class="toc-text">参数学习（Parameter learning）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Stationary"><span class="toc-number">1.1.3.</span> <span class="toc-text">Stationary</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Markov-Chains"><span class="toc-number">1.2.</span> <span class="toc-text">Markov Chains</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E5%AD%A6%E4%B9%A0%EF%BC%88Parameter-learning%EF%BC%89-1"><span class="toc-number">1.2.1.</span> <span class="toc-text">参数学习（Parameter learning）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hidden-Markov-Models"><span class="toc-number">1.3.</span> <span class="toc-text">Hidden Markov Models</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Inference"><span class="toc-number">1.3.1.</span> <span class="toc-text">Inference</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Filtering"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">Filtering</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Smoothing"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">Smoothing</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#MAP-inference"><span class="toc-number">1.3.1.3.</span> <span class="toc-text">MAP inference</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Parameter-Learning"><span class="toc-number">1.3.2.</span> <span class="toc-text">Parameter Learning</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Continuous-Data"><span class="toc-number">1.3.3.</span> <span class="toc-text">Continuous Data</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Neural-Network-Approches"><span class="toc-number">1.4.</span> <span class="toc-text">Neural Network Approches</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Word-Vectors"><span class="toc-number">1.4.1.</span> <span class="toc-text">Word Vectors</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#RNNs"><span class="toc-number">1.4.2.</span> <span class="toc-text">RNNs</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#GRU-Gated-Recurrent-Unit"><span class="toc-number">1.4.2.1.</span> <span class="toc-text">GRU (Gated Recurrent Unit)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#LSTM-Long-Short-Term-Memory"><span class="toc-number">1.4.2.2.</span> <span class="toc-text">LSTM (Long Short-Term Memory)</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Non-Recurrent-Modesl-ConvNets-Transformer"><span class="toc-number">1.4.3.</span> <span class="toc-text">Non-Recurrent Modesl (ConvNets, Transformer)</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#ConvNets-WaveNet"><span class="toc-number">1.4.3.1.</span> <span class="toc-text">ConvNets&#x2F;WaveNet</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Transformer-amp-Attention"><span class="toc-number">1.4.3.2.</span> <span class="toc-text">Transformer&amp;Attention</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Stuctured-State-Space-Models"><span class="toc-number">1.4.4.</span> <span class="toc-text">Stuctured State Space Models</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#State-space-model"><span class="toc-number">1.4.4.1.</span> <span class="toc-text">State-space model</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#S4-model"><span class="toc-number">1.4.4.2.</span> <span class="toc-text">S4 model</span></a></li></ol></li></ol></li></ol></li></ol>
   </div>
 </section>
 
@@ -4409,7 +4666,7 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
 </script>
 
 
-  <script type="application/ld+json">[{"@context":"https://schema.org.cn","@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"https://schema.org.cn","@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","sameAs":["https://github.com/volantis-x"],"description":"hi"},{"@context":"https://schema.org.cn","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https://archerui.github.io/","name":"Hexo"}},{"@type":"ListItem","position":2,"item":{"@id":"https://archerui.github.io/categories/AI/","name":"AI"}},{"@type":"ListItem","position":3,"item":{"@id":"https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/","name":"Machine Learning for Graphs and Sequential Data"}}]},{"@context":"https://schema.org.cn","@type":"WebSite","name":"Hexo","url":"https://archerui.github.io/","keywords":null,"description":"hi","author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","description":"hi"},"publisher":{"@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"https://archerui.github.io?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"https://schema.org.cn","@type":"BlogPosting","headline":"Machine Learning for Graphs and Sequential Data","description":"Machine Learning for Graphs and Sequential Data","inLanguage":"en","mainEntityOfPage":{"@type":"WebPage","@id":"https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/"},"author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/"},"publisher":{"@type":"Organization","name":"Hexo","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/","wordCount":47,"datePublished":"2026-04-19T22:14:35.000Z","dateModified":"2026-05-04T22:30:37.824Z","articleSection":"AI","keywords":"机器学习,Machine Learning,AI","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
+  <script type="application/ld+json">[{"@context":"https://schema.org.cn","@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"https://schema.org.cn","@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","sameAs":["https://github.com/volantis-x"],"description":"hi"},{"@context":"https://schema.org.cn","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https://archerui.github.io/","name":"Hexo"}},{"@type":"ListItem","position":2,"item":{"@id":"https://archerui.github.io/categories/AI/","name":"AI"}},{"@type":"ListItem","position":3,"item":{"@id":"https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/","name":"Machine Learning for Graphs and Sequential Data"}}]},{"@context":"https://schema.org.cn","@type":"WebSite","name":"Hexo","url":"https://archerui.github.io/","keywords":null,"description":"hi","author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","description":"hi"},"publisher":{"@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"https://archerui.github.io?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"https://schema.org.cn","@type":"BlogPosting","headline":"Machine Learning for Graphs and Sequential Data","description":"Machine Learning for Graphs and Sequential Data","inLanguage":"en","mainEntityOfPage":{"@type":"WebPage","@id":"https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/"},"author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/"},"publisher":{"@type":"Organization","name":"Hexo","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/","wordCount":47,"datePublished":"2026-04-19T22:14:35.000Z","dateModified":"2026-05-05T15:23:02.702Z","articleSection":"AI","keywords":"机器学习,Machine Learning,AI","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
 
 
 
