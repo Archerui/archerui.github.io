@@ -49,7 +49,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png">
 <meta property="article:published_time" content="2026-03-06T07:43:45.000Z">
-<meta property="article:modified_time" content="2026-04-22T14:59:42.789Z">
+<meta property="article:modified_time" content="2026-05-19T19:34:23.255Z">
 <meta property="article:tag" content="机器学习">
 <meta property="article:tag" content="Machine Learning">
 <meta property="article:tag" content="AI">
@@ -2248,7 +2248,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
     root: '/',
     debug: "env",
     default: {"avatar":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/avatar/round/3442075.svg","link":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/link/8f277b4ee0ecd.svg","cover":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/cover/76b86c0226ffd.svg","image":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/image/2659360.svg"},
-    lastupdate: new Date(1778752372421),
+    lastupdate: new Date(1779219273184),
     cdn: {
       izitoast_css: 'https://unpkg.com/izitoast@1.4.0/dist/css/iziToast.min.css',
       izitoast_js: 'https://unpkg.com/izitoast@1.4.0/dist/js/iziToast.min.js',
@@ -2722,10 +2722,10 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
           
         
           
-            <div class="new-meta-item date" itemprop="dateModified" datetime="2026-04-22T16:59:42+02:00">
+            <div class="new-meta-item date" itemprop="dateModified" datetime="2026-05-19T21:34:23+02:00">
   <a class='notlink'>
     <i class="fa-solid fa-edit fa-fw" aria-hidden="true"></i>
-    <p>Last UpdatedApr 22, 2026</p>
+    <p>Last UpdatedMay 19, 2026</p>
   </a>
 </div>
 
@@ -2762,7 +2762,68 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 
   <div id="layoutHelper-page-plugins"></div>
   <div id="post-body" itemprop="articleBody">
-    <h2 id="反向传播-Backpropagation"><a href="#反向传播-Backpropagation" class="headerlink" title="反向传播 Backpropagation"></a><strong>反向传播 Backpropagation</strong></h2>
+    <h2 id="反向传播-Backpropagation"><a href="#反向传播-Backpropagation" class="headerlink" title="反向传播 Backpropagation"></a><strong>反向传播 Backpropagation</strong></h2><h2 id="Regularization"><a href="#Regularization" class="headerlink" title="Regularization"></a><strong>Regularization</strong></h2><p>为了防止过拟合（overfitting），我们经常会在loss function里加一项<strong>egularization term（正则化项）</strong>，用来惩罚过大的模型参数，使模型不要过度依赖训练数据中的某些特征。</p>
+<script type="math/tex; mode=display">
+L = L_{\text{data}} + \lambda R(w)</script><p>一般有2种：</p>
+<ul>
+<li><p>L1 Regularization</p>
+<script type="math/tex; mode=display">
+L = L_{\text{data}} + \lambda \left\| w \right\|_1</script><p>会鼓励权重稀疏，也就是会倾向于<strong>将权重集中在少数特征上</strong>。</p>
+</li>
+<li><p>L2 Regularization</p>
+<script type="math/tex; mode=display">
+L = L_{\text{data}} + \lambda \left\| w \right\|_2^2</script><p>会鼓励权重变小且更平滑，倾向于<strong>将权重分散到多个特征上</strong>。</p>
+</li>
+</ul>
+<p>来看个例子：</p>
+<script type="math/tex; mode=display">
+\theta_1 = [0,0.75,0]</script><script type="math/tex; mode=display">
+\theta_2 = [0.25, 0.5, 0.25]</script><p>会发现：</p>
+<script type="math/tex; mode=display">
+0.75 = \left\| \theta_1 \right\|_1 < \left\| \theta_1 \right\|_1 = 1</script><script type="math/tex; mode=display">
+0.5625 = \left\| \theta_1 \right\|_2 > \left\| \theta_2 \right\|_2 = 0.375</script><p>可以从2个角度来理解这个区别：</p>
+<p><strong>1. 导数：</strong></p>
+<p>L1的导数：</p>
+<script type="math/tex; mode=display">
+\frac{\partial \left\| w \right\|_1}{\partial w_i}
+=
+\begin{cases}
+1, & w_i > 0, \\
+-1, & w_i < 0
+\end{cases}</script><p>在Gradient Descent（梯度下降法）里的更新就是：</p>
+<script type="math/tex; mode=display">
+w_i
+\leftarrow
+w_i
+-
+\eta\lambda \operatorname{sign}(w_i)
+ = 
+\begin{cases}
+w_i-\eta\lambda, & w_i > 0, \\
+w_i + \eta\lambda, & w_i < 0
+\end{cases}</script><p>也就是每个component挪动的距离都是一样的（<strong>只和$w_i$的正负有关，与大小无关</strong>），而且是都往0点的方向移动。所以原本偏小的component就很容易趋近0，导致最后非常少的component不等于0。</p>
+<p><br></p>
+<p>L2的导数：</p>
+<script type="math/tex; mode=display">
+\frac{\partial \left\| w \right\|_2^2}{\partial w_i}
+=
+2w_i</script><p>在Gradient Descent（梯度下降法）里的更新就是：</p>
+<script type="math/tex; mode=display">
+w_i
+\leftarrow
+w_i
+-
+\eta\lambda 2w_i
+=
+(1-2\eta\lambda )w_i</script><p>也就是<strong>按比例缩小权重。</strong></p>
+<p><strong>2. 单位圆</strong></p>
+<p>观察L1和L2的单位圆不能发现：</p>
+<ul>
+<li>L1 norm的在2维里是一个菱形，在高维里是一个有很多尖角的多面体。所以最优解容易落在某一个尖角上（也就是部分权重等于0）。</li>
+<li>L2 norm的是一个圆形，在高维里是球，是光滑的，所以最优解的权重分布比较平均。</li>
+</ul>
+<p><img src="/images/image-20260519210727779.png" class="lazyload" data-srcset="/images/image-20260519210727779.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="image-20260519210727779"></p>
+
   </div>
   
   
@@ -2923,7 +2984,7 @@ CTF的题目类型主要可以分成静态和动态：
 
 
   <div class='content'>
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD-Backpropagation"><span class="toc-number">1.</span> <span class="toc-text">反向传播 Backpropagation</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD-Backpropagation"><span class="toc-number">1.</span> <span class="toc-text">反向传播 Backpropagation</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Regularization"><span class="toc-number">2.</span> <span class="toc-text">Regularization</span></a></li></ol>
   </div>
 </section>
 
@@ -3592,7 +3653,7 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
 </script>
 
 
-  <script type="application/ld+json">[{"@context":"https://schema.org.cn","@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"https://schema.org.cn","@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","sameAs":["https://github.com/volantis-x"],"description":"hi"},{"@context":"https://schema.org.cn","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https://archerui.github.io/","name":"Hexo"}},{"@type":"ListItem","position":2,"item":{"@id":"https://archerui.github.io/categories/AI/","name":"AI"}},{"@type":"ListItem","position":3,"item":{"@id":"https://archerui.github.io/2026/03/06/AI/深度学习-Deep-Learning/","name":"深度学习 Deep Learning"}}]},{"@context":"https://schema.org.cn","@type":"WebSite","name":"Hexo","url":"https://archerui.github.io/","keywords":null,"description":"hi","author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","description":"hi"},"publisher":{"@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"https://archerui.github.io?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"https://schema.org.cn","@type":"BlogPosting","headline":"深度学习 Deep Learning","description":"机器学习相关笔记","inLanguage":"en","mainEntityOfPage":{"@type":"WebPage","@id":"https://archerui.github.io/2026/03/06/AI/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-Deep-Learning/"},"author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/"},"publisher":{"@type":"Organization","name":"Hexo","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"https://archerui.github.io/2026/03/06/AI/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-Deep-Learning/","wordCount":8,"datePublished":"2026-03-06T07:43:45.000Z","dateModified":"2026-04-22T14:59:42.789Z","articleSection":"AI","keywords":"机器学习,Machine Learning,AI","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
+  <script type="application/ld+json">[{"@context":"https://schema.org.cn","@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"https://schema.org.cn","@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","sameAs":["https://github.com/volantis-x"],"description":"hi"},{"@context":"https://schema.org.cn","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https://archerui.github.io/","name":"Hexo"}},{"@type":"ListItem","position":2,"item":{"@id":"https://archerui.github.io/categories/AI/","name":"AI"}},{"@type":"ListItem","position":3,"item":{"@id":"https://archerui.github.io/2026/03/06/AI/深度学习-Deep-Learning/","name":"深度学习 Deep Learning"}}]},{"@context":"https://schema.org.cn","@type":"WebSite","name":"Hexo","url":"https://archerui.github.io/","keywords":null,"description":"hi","author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","description":"hi"},"publisher":{"@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"https://archerui.github.io?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"https://schema.org.cn","@type":"BlogPosting","headline":"深度学习 Deep Learning","description":"机器学习相关笔记","inLanguage":"en","mainEntityOfPage":{"@type":"WebPage","@id":"https://archerui.github.io/2026/03/06/AI/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-Deep-Learning/"},"author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/"},"publisher":{"@type":"Organization","name":"Hexo","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"https://archerui.github.io/2026/03/06/AI/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-Deep-Learning/","wordCount":8,"datePublished":"2026-03-06T07:43:45.000Z","dateModified":"2026-05-19T19:34:23.255Z","articleSection":"AI","keywords":"机器学习,Machine Learning,AI","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
 
 
 
