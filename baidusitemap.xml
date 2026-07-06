@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/</loc>
+    <lastmod>2026-07-06</lastmod>
+  </url>
+  <url>
     <loc>https://archerui.github.io/2025/05/22/%E7%BC%96%E7%A8%8B/Ocaml-%E5%85%A5%E9%97%A8/</loc>
-    <lastmod>2026-06-27</lastmod>
+    <lastmod>2026-06-29</lastmod>
   </url>
   <url>
     <loc>https://archerui.github.io/2026/05/24/AI/%E9%9D%A2%E8%AF%95%E5%90%91-AI-Agent/</loc>
@@ -11,10 +15,6 @@
   <url>
     <loc>https://archerui.github.io/2025/03/26/%E7%BC%96%E7%A8%8B/Cpp-%E5%85%A5%E9%97%A8/</loc>
     <lastmod>2026-06-14</lastmod>
-  </url>
-  <url>
-    <loc>https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/</loc>
-    <lastmod>2026-06-13</lastmod>
   </url>
   <url>
     <loc>https://archerui.github.io/2026/05/31/%E7%BC%96%E7%A8%8B/LeetCode-%E5%88%B7%E9%A2%98/</loc>

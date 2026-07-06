@@ -49,7 +49,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png">
 <meta property="article:published_time" content="2026-04-19T22:14:35.000Z">
-<meta property="article:modified_time" content="2026-06-13T18:52:41.423Z">
+<meta property="article:modified_time" content="2026-07-06T09:11:37.332Z">
 <meta property="article:tag" content="机器学习">
 <meta property="article:tag" content="Machine Learning">
 <meta property="article:tag" content="AI">
@@ -2248,7 +2248,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
     root: '/',
     debug: "env",
     default: {"avatar":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/avatar/round/3442075.svg","link":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/link/8f277b4ee0ecd.svg","cover":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/cover/76b86c0226ffd.svg","image":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/image/2659360.svg"},
-    lastupdate: new Date(1782549943109),
+    lastupdate: new Date(1783329124825),
     cdn: {
       izitoast_css: 'https://unpkg.com/izitoast@1.4.0/dist/css/iziToast.min.css',
       izitoast_js: 'https://unpkg.com/izitoast@1.4.0/dist/js/iziToast.min.js',
@@ -2722,10 +2722,10 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
           
         
           
-            <div class="new-meta-item date" itemprop="dateModified" datetime="2026-06-13T20:52:41+02:00">
+            <div class="new-meta-item date" itemprop="dateModified" datetime="2026-07-06T11:11:37+02:00">
   <a class='notlink'>
     <i class="fa-solid fa-edit fa-fw" aria-hidden="true"></i>
-    <p>Last UpdatedJun 13, 2026</p>
+    <p>Last UpdatedJul 6, 2026</p>
   </a>
 </div>
 
@@ -4006,7 +4006,314 @@ k_\omega(t-t_i)
 \mathbf{t}^{(N)}\sim \lambda_{HPP}</script><p>Denoising 阶段：</p>
 <p>从噪声事件序列开始，逐步采样回更干净的事件序列，最终恢复数据分布：</p>
 <script type="math/tex; mode=display">
-\mathbf{t}^{(0)}\sim \lambda_0</script>
+\mathbf{t}^{(0)}\sim \lambda_0</script><h2 id="Graphs"><a href="#Graphs" class="headerlink" title="Graphs"></a><strong>Graphs</strong></h2><h3 id="Ranking"><a href="#Ranking" class="headerlink" title="Ranking"></a><strong>Ranking</strong></h3><p>核心问题：该怎么给节点排序？</p>
+<p>最典型的例子就是 Web 网页排序。互联网可以看成一个巨大的有向图：网页是节点，超链接是边。问题是，面对海量网页，怎么判断哪个网页更“重要”？</p>
+<h4 id="PageRank"><a href="#PageRank" class="headerlink" title="PageRank"></a><strong>PageRank</strong></h4><p>PageRank 的核心递归思想是：<strong>A page is important if many importants pages point to it。如果有很多重要页面指向某个页面，那么这个页面就很重要。</strong></p>
+<p>这是一种“投票”机制：每个页面会把自己的重要性分给它指向的页面；如果一个页面有很多出边，它的投票会被分摊。也就是说，如果页面 $i$ 的 PageRank 是 $r_i$，出度是 $d_i$，并且它指向页面 $j$，那么它给 $j$ 的贡献是：</p>
+<script type="math/tex; mode=display">
+\frac{r_i}{d_i}</script><p>因此页面 $j$ 的排名分数是所有指向它的页面贡献之和：</p>
+<script type="math/tex; mode=display">
+r_j = \sum_{i \to j} \frac{r_i}{d_i}</script><p>这里 $d_i$ 表示节点 $i$ 的出度。</p>
+<p>直观理解：<br>如果一个非常重要的网站只链接到少数几个页面，那么它给每个被链接页面的“投票”很强；如果一个页面本身不重要，或者它链接出去很多页面，那么它对单个页面的贡献就小。</p>
+<p>不能发现最后所有的等式会组合成一个方程组。为了更好的表达，我们引入<strong>随机邻接矩阵</strong>M：</p>
+<script type="math/tex; mode=display">
+M_{ji} =
+\begin{cases}
+\dfrac{1}{d_i}, & \text{if } i \to j,\\
+0, & \text{otherwise}.
+\end{cases}</script><p>而原来的 PageRank 方程可以写成：</p>
+<script type="math/tex; mode=display">
+r = Mr</script><p>也就是说，PageRank向量$r$是矩阵$M$的一个特征向量，对应特征值为 $1$。</p>
+<p>因为M是<strong>列随机矩阵</strong>（每一列的和为 $1$），所以最大的特征值就是1。那么现在问题变成了求M的最<strong>大特征值的特征向量</strong>。</p>
+<p>可以用幂迭代：</p>
+<ol>
+<li><p>初始化一个归一化的随机向量 $r$；</p>
+</li>
+<li><p>不断更新：</p>
+<script type="math/tex; mode=display">
+r \leftarrow M r</script></li>
+<li><p>直到收敛。</p>
+</li>
+</ol>
+<p>并且M是稀疏矩阵（sparse），实际计算时只需要考虑每个节点的入邻居，而不是构造一个完整的巨大矩阵。</p>
+<p><br></p>
+<p>还可以把网页跳转理解成是一个markov chain，下一步跳转的网站只取决于当前在哪个网页：</p>
+<script type="math/tex; mode=display">
+\text{Pr}(X_{t+1}=j \mid X_t = i) = M_{ji}</script><p><br></p>
+<p>为了保证随机游走有唯一稳定的长期分布，图需要满足2个条件：</p>
+<ul>
+<li><p><strong>不可约，irreducible</strong>：从任意状态都可以到达任意其他状态。<br> 换成网页图，就是从任何网页出发，都有路径能到达其他网页。</p>
+</li>
+<li><p><strong>非周期，aperiodic</strong>：状态不会只能以固定周期返回自己。<br> 如果一个状态只能每隔 3 步、6 步、9 步回到自己，那么它就是周期性的。</p>
+</li>
+</ul>
+<p>在irreducible的Markov chain里，只要有一个状态是非周期的，那么所有状态都是非周期的。</p>
+<p>普通的PageRank 会遇到的三个问题。</p>
+<p>第一，<strong>dead ends，死胡同节点</strong>。有些网页没有出链，随机游走走到这里就“无路可走”，导致重要性泄漏出去。</p>
+<p><img src="/images/image-20260705170404854.png" class="lazyload" data-srcset="/images/image-20260705170404854.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="image-20260705170404854"></p>
+<p>第二，<strong>spider traps，蜘蛛陷阱</strong>。某一组网页的所有出链都指向组内，随机游走一旦进入这个集合，就出不来了，最终这些节点会吸收所有重要性。</p>
+<p><img src="/images/image-20260705170420029.png" class="lazyload" data-srcset="/images/image-20260705170420029.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="image-20260705170420029"></p>
+<p>第三，<strong>periodic states，周期状态</strong>。如果从某个状态出发只能以固定周期回到它自己，随机游走可能不会稳定收敛，而是来回震荡。</p>
+<p><img src="/images/image-20260705170432225.png" class="lazyload" data-srcset="/images/image-20260705170432225.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="image-20260705170432225"></p>
+<p>所以，单纯沿链接随机游走还不够，需要一个修正机制。</p>
+<h4 id="Random-Teleports"><a href="#Random-Teleports" class="headerlink" title="Random Teleports"></a><strong>Random Teleports</strong></h4><p>随机冲浪者在每一步有两个选择：</p>
+<ul>
+<li>$\beta$的概率沿着一个随机出链继续走；</li>
+<li>$1-\beta$的概率跳到某个随机页面。</li>
+</ul>
+<p>于是 PageRank 公式变为：</p>
+<script type="math/tex; mode=display">
+r_j = \sum_{i \to j} \beta \frac{r_i}{d_i} + (1-\beta)\frac{1}{N}</script><p>矩阵形式为：</p>
+<script type="math/tex; mode=display">
+A = \beta M + (1-\beta)\frac{1}{N}\mathbf{1}\mathbf{1}^T</script><p>最终求：</p>
+<script type="math/tex; mode=display">
+r = A r</script><p>带随机传送后，矩阵 $A$ 会变成稠密矩阵，因为随机传送意味着每个节点都可能跳到任意节点。所以不能用稠密矩阵来直接来计算PageRank，而是先计算稀疏M的部分，然后再加上常数项。</p>
+<p><br></p>
+<p>但PageRank也有一些问题：</p>
+<ul>
+<li><p>PageRank 衡量的是<strong>通用流行度</strong>，不一定适合特定主题。例如一个体育主题下的权威网页，未必在全网 PageRank 很高。</p>
+<p>解决思路是<strong>Topic-Sensitive PageRank</strong>。</p>
+</li>
+<li><p>PageRank 容易受到 link spam 影响。有人可以人为制造链接结构，提高目标网页 PageRank。</p>
+<p>解决思路是<strong>TrustRank</strong>。</p>
+</li>
+<li><p>PageRank 只有单一重要性分数，但现实中“重要性”可能有多种定义。</p>
+</li>
+<li>解决思路包括Hubs-and-Authorities (HITS, Hyperlink-Induced Topic Search)等。</li>
+</ul>
+<p><strong>Topic-Sensitive PageRank</strong>的思想是：<strong>随机传送时，不是跳到所有页面，而是跳到某个主题相关页面集合 $S$</strong>。例如，如果用户搜索体育内容，就让随机冲浪者更可能跳到体育相关页面；如果用户搜索历史内容，就跳到历史相关页面。这样得到的 PageRank 不再是全局流行度，而是主题相关重要性。</p>
+<p>矩阵形式可以写成：</p>
+<script type="math/tex; mode=display">
+r = \beta M r + (1-\beta)\pi</script><p>其中 $\pi$ 是 teleport vector。如果是主题集合 $S$，那么：</p>
+<script type="math/tex; mode=display">
+\pi_i =
+\begin{cases}
+\frac{1}{|S|}, & i \in S \\
+0, & otherwise
+\end{cases}</script><p>还可以进一步推广到任意 teleport vector $\pi$，只要满足 $\sum_i \pi_i = 1$即可。</p>
+<p><strong>TrustRank</strong>的思想是：用可信网页作为 teleport set，做一种 topic-sensitive PageRank。例如使用 .edu 域名，或者非美国学校的类似可信域名。这样随机传送主要从可信页面出发，垃圾链接农场就不容易凭空获得很高权重。</p>
+<h3 id="Clustering"><a href="#Clustering" class="headerlink" title="Clustering"></a><strong>Clustering</strong></h3><p>输入是一个图 $G=(V,E)$，目标是把顶点 $V$ 分成若干个 cluster。图聚类主要根据对象之间的关系聚类，也就是边所表达的连接信息。</p>
+<p>一个“好”的图聚类通常满足两点：同一个簇内部有很多边，也就是 intra-cluster edges 多；不同簇之间只有少量边，也就是 inter-cluster edges 少。</p>
+<p>Clustering的算法大致可以分成2种：</p>
+<ul>
+<li><strong>partitioning approaches</strong> 要求每个节点恰好属于一个簇；</li>
+<li><strong>non-partitioning approaches</strong> 允许簇重叠，也允许有离群点不属于任何簇。</li>
+</ul>
+<p>我们这里主要关注weighted undirected graphs 上的 non-overlapping clustering。</p>
+<p><br></p>
+<p>可以把问题转换成优化问题：给定图 $G=(V,E)$，把顶点集 $V$ 分成 $k$ 个簇 $\mathcal C=\{C_1,\dots,C_k\}$，</p>
+<script type="math/tex; mode=display">
+\text{min}Q(\mathcal C) \text{ s.t } \biguplus_{i=1,...,k}C_i = V</script><p>（disjoint union）。</p>
+<h4 id="Minimum-Cut"><a href="#Minimum-Cut" class="headerlink" title="Minimum Cut"></a><strong>Minimum Cut</strong></h4><p>考虑2个cluster的情况：把图分成两部分 $C_1,C_2$，让跨越两个簇之间的边权总和尽可能小。这个量叫 cut：</p>
+<script type="math/tex; mode=display">
+\text{cut}(C_1,C_2)=\sum_{v_1\in C_1, v_2\in C_2} w(v_1,v_2)</script><p>但是minimum cut 有严重缺陷：它倾向于把很小的一组节点，甚至单个节点，从大图中切出来，因为这样跨簇边可能最少；而且它只关心 inter-cluster edges，没有考虑簇内部是否紧密。</p>
+<p>所以可以引入归一化cut标准：</p>
+<script type="math/tex; mode=display">
+\begin{align*}
+
+\text{RatioCut}(C_1,C_2)
+&= \frac{\text{cut}(C_1,C_2)}{|C_1|}
++ \frac{\text{cut}(C_2,C_1)}{|C_2|} \\
+\text{NormalizedCut}(C_1,C_2)
+&= \frac{\text{cut}(C_1,C_2)}{\text{vol}(C_1)}
++ \frac{\text{cut}(C_2,C_1)}{\text{vol}(C_2)}
+\end{align*}</script><p>其中 $\text{vol}(C)$ 是节点集合的 volume，即集合内所有节点度数之和。</p>
+<p>但是当cluster数量上来了之后这个问题便变成了NP-hard的问题。</p>
+<p><br></p>
+<p>换个思路，我们可以把它变成一个labeling的问题：对每个节点 $v$，赋予一个标签 $f_v$ 表示它属于哪个簇。二分类时，可以令 $f_v\in\{+1,-1\}$。聚类目标是让标签函数 $f$ 在图上“平滑”：相邻节点的标签应该相似。于是可以最小化：</p>
+<script type="math/tex; mode=display">
+\sum_{\{u,v\}\in E} W_{uv}(f_u-f_v)^2</script><p>如果一条边权重大，而两个端点标签差异大，那么惩罚就大。这个目标强迫连接紧密的点有相似标签。</p>
+<p>定义图拉普拉斯矩阵（Laplacian matrix）：</p>
+<script type="math/tex; mode=display">
+L=D-W</script><p>即</p>
+<script type="math/tex; mode=display">
+L_{uv} =
+\begin{cases}
+-W_{uv}, & \text{if } (u,v) \in E \\
+\deg(v), & \text{if } u = v \\
+0, & \text{otherwise}
+\end{cases}</script><p>其中 $W$ 是加权邻接矩阵，$D$ 是（加权）度矩阵（$D_{ii}=\text{deg}(i)=\sum_jW_{ij}$）。对无向图，$W$ 对称，$D$ 是对角矩阵。</p>
+<p>拉普拉斯矩阵（Laplacian matrix）有几个重要性质：</p>
+<p>1. </p>
+<script type="math/tex; mode=display">
+f^\top L f
+=
+\sum_{\{u,v\}\in E} W_{uv}(f_u-f_v)^2</script><p>刚好可以把我们刚才的目标函数（objective function）转改写成矩阵的乘法。</p>
+<p>2. Laplacian是additive的：</p>
+<script type="math/tex; mode=display">
+L_{G \cup H} = L_G + L_H</script><p>3. $L$ 是对称半正定矩阵（symmetric, positive semi-definite）</p>
+<p>4. $L$ 的最小特征值是 0，对应的特征向量是全 1 向量 $\mathbf 1$，或者任意常数倍 $c\mathbf 1$。</p>
+<p>证明0是最小的特征值：</p>
+<p>设 $x$ 是 $L$ 的任意一个特征向量，对应特征值是 $\lambda$：</p>
+<script type="math/tex; mode=display">
+Lx=\lambda x</script><p>两边左乘 $x^\top$：</p>
+<script type="math/tex; mode=display">
+x^\top Lx = x^\top \lambda x</script><p>也就是：</p>
+<script type="math/tex; mode=display">
+x^\top Lx = \lambda x^\top x</script><p>所以：</p>
+<script type="math/tex; mode=display">
+\lambda = \frac{x^\top Lx}{x^\top x} \geq 0</script><p>5. $L$ 有 $n$ 个非负实特征值：</p>
+<script type="math/tex; mode=display">
+0=\lambda_1\le \lambda_2\le \cdots \le \lambda_n</script><p><br></p>
+<p>来看2个cluster的情况。考虑min RatioCut：</p>
+<script type="math/tex; mode=display">
+\min_{C_1 \subset V} \frac{\operatorname{cut}(C_1,C_2)}{|C_1|} + \frac{\operatorname{cut}(C_2,C_1)}{|C_2|}, \qquad \text{where } C_2 = V \setminus C_1 := \bar{C}_1</script><p>定义一个比较奇怪的indicator vector $f_{C_1}$：</p>
+<script type="math/tex; mode=display">
+f_{C_1}[i] =
+\begin{cases}
++\sqrt{\frac{|\bar{C}_1|}{|C_1|}}, & \text{if } v_i \in C_1 \\
+-\sqrt{\frac{|C_1|}{|\bar{C}_1|}}, & \text{else}
+\end{cases}</script><p>但它有些非常重要的性质：</p>
+<p>1. <script type="math/tex">\sum_i f_{C_1}[i] = 0</script>，也就是$f_{C_1} \perp \vec{1}$</p>
+<p>2. <script type="math/tex">f_{C_1}^T \cdot f_{C_1} = \|f_{C_1}\|_2^2 = |V|</script>（长度是常量）</p>
+<p>3. </p>
+<script type="math/tex; mode=display">
+f_{C_1}^T \cdot L \cdot f_{C_1} = \cdots = |V| \cdot \left[\frac{\operatorname{cut}(C_1,C_2)}{|C_1|} + \frac{\operatorname{cut}(C_1,C_2)}{|\bar{C}_1|}\right] = |V| \cdot \text{ratio cut}</script><p>当我们给$f$的要求放宽松一点，只要求它满足1，2这两条性质，那么就可以把问题变成：</p>
+<script type="math/tex; mode=display">
+\min_{f_{C_1} \in \mathbb{R}^{|V|}} \left\{ f_{C_1}^T \cdot L \cdot f_{C_1} \right\}
+\quad \text{subject to } f_{C_1} \perp \vec{1} \text{ and } \|f_{C_1}\|_2 = \sqrt{|V|}</script><p>注意到，对于所以的对称矩阵$L$都有：</p>
+<script type="math/tex; mode=display">
+\begin{align*}
+\lambda_1 &= \min_{\|x_1\|=1} x_1^T L x_1 \\
+\lambda_2 &= \min_{\substack{\|x_2\|=1, \; x_2 \perp x_1}} x_2^T L x_2 \\
+\lambda_3 &= \cdots
+\end{align*}</script><p>所以上面优化问题实际上要找到$f_{C_1}$实际上就是$L$第二小的eigenvector。</p>
+<p>那么最后怎么通过$f_{C_1}$来还原cluster呢？</p>
+<ul>
+<li>2个cluster的情况直接考虑$f_{C_1}$的符号即可</li>
+<li>多个cluster就需要基于$f_{C_1}$的值做一个k-means clustering。</li>
+</ul>
+<p><br></p>
+<p>现在再推广到cluster数量$k&gt;2$的情况。</p>
+<p>对每个簇 $C$，定义一个 indicator vector：</p>
+<script type="math/tex; mode=display">
+h_C(i)=
+\begin{cases}
+\frac{1}{\sqrt{|C|}}, & v_i\in C\\[4pt]
+0, & \text{otherwise}
+\end{cases}</script><p>然后把这些向量作为列拼成矩阵：</p>
+<script type="math/tex; mode=display">
+H=
+[h_{C_1},h_{C_2},\dots,h_{C_k}]</script><p>不难注意到：</p>
+<script type="math/tex; mode=display">
+H^TH=I</script><script type="math/tex; mode=display">
+(H^T L H)_{ii} = h_{C_i}^T \cdot L \cdot h_{C_i} = \frac{\operatorname{cut}(C_i, V \setminus C_i)}{|C_i|}</script><p>所以</p>
+<script type="math/tex; mode=display">
+\operatorname{RatioCut}(C_1, \ldots, C_k)
+= \sum_{i=1}^k \frac{\operatorname{cut}(C_i, V \setminus C_i)}{|C_i|}
+= \sum_{i=1}^k (H^T L H)_{ii}
+= \operatorname{trace}(H^T L H)</script><p>同样，问题就变成了：</p>
+<script type="math/tex; mode=display">
+\min_{C_1,\ldots,C_k} \operatorname{trace}(H^T L H)
+\quad \text{subject to } H^T H = \mathrm{Id} \text{ and } H \text{ as defined before}</script><p>如果我们给H的条件放宽松一点，那么就是</p>
+<script type="math/tex; mode=display">
+\min_{H \in \mathbb{R}^{|V| \times k}} \operatorname{trace}(H^T L H)
+\quad \text{subject to } H^T H = \mathrm{Id}</script><p>类似的，最优解H就是<strong>L的前k个最小eigenvectors</strong>，因为：</p>
+<p>设 $L$ 的特征分解为：</p>
+<script type="math/tex; mode=display">
+L=U\Lambda U^\top</script><p>其中：</p>
+<script type="math/tex; mode=display">
+\Lambda=
+\text{diag}(\lambda_1,\dots,\lambda_n)</script><p>并且：</p>
+<script type="math/tex; mode=display">
+\lambda_1\le \lambda_2\le\cdots\le\lambda_n</script><p>目标函数是：</p>
+<script type="math/tex; mode=display">
+\text{trace}(H^\top LH)</script><p>代入特征分解：</p>
+<script type="math/tex; mode=display">
+\text{trace}(H^\top U\Lambda U^\top H)</script><p>令：</p>
+<script type="math/tex; mode=display">
+Y=U^\top H</script><p>因为 $U$ 是正交矩阵，且 $H^\top H=I$，所以：</p>
+<script type="math/tex; mode=display">
+Y^\top Y=I</script><p>目标变成：</p>
+<script type="math/tex; mode=display">
+\text{trace}(Y^\top \Lambda Y) = \sum_{j=1}^k y_j^\top \Lambda y_j = \sum_{j=1}^k \lambda_1 y_{j1}^2+ \cdots \lambda_n y_{jn}^2</script><p>并且</p>
+<script type="math/tex; mode=display">
+\forall j: \|y_j\|^2=1</script><p>所以$\text{trace}(Y^\top \Lambda Y)$的最优解就是</p>
+<script type="math/tex; mode=display">
+y_1 = e1,...,y_k = e_k</script><p>然后再带回去原问题：</p>
+<script type="math/tex; mode=display">
+H^\star
+=
+U[e_1,e_2,\dots,e_k]
+= [u_1,u_2,\dots,u_k]</script><h4 id="spectral-embeddings"><a href="#spectral-embeddings" class="headerlink" title="spectral embeddings"></a><strong>spectral embeddings</strong></h4><p>$H \in \mathbb{R}^{n \times k}$的列向量是L的前k个eigenvector，然后行向量就是每个node的embedding。</p>
+<p>按照一开始严格的H要求，得出来的每个行向量应该只有1项是不为0的，表示cluster。即便是后面没有严格要求了，这些向量依旧能携带cluster信息。</p>
+<p>可以针对这些embedding做k-means确定每个的label/cluster。</p>
+<h4 id="Modularity"><a href="#Modularity" class="headerlink" title="Modularity"></a>Modularity</h4><p>前面cut-based 方法的一个局限是：通常需要提前知道簇数 $k$。</p>
+<p>而modularity 的核心思想是：不直接看簇内边有多少，而是比较“实际簇内边数”和“在随机图里期望的簇内边数”差多少。</p>
+<h4 id="Probabilistic-Approaches"><a href="#Probabilistic-Approaches" class="headerlink" title="Probabilistic Approaches"></a><strong>Probabilistic Approaches</strong></h4><h3 id="Prediction"><a href="#Prediction" class="headerlink" title="Prediction"></a><strong>Prediction</strong></h3><p>图上的预测问题可以分成几个层级：</p>
+<ul>
+<li><strong>节点级任务（node-level）</strong>：预测单个节点的属性或标签。</li>
+<li><strong>图级任务（graph-level）</strong>：预测整张图的属性。</li>
+<li>边级任务（edge-level）：可以预测已有边的属性，也可以预测新边是否可能存在。</li>
+</ul>
+<p>学习任务也可以分成几种：</p>
+<ul>
+<li><p><strong>Transductive learning</strong>：只预测当前给定的未标注样本</p>
+<p>给定一批有标签训练样本 $T$，一批无标签测试样本 $U$，以及可能存在的额外知识，比如图结构 $W$。目标不是学习一个可以泛化到任意新样本的函数，而是只预测当前这批无标签样本 $U$ 的标签。</p>
+</li>
+<li><p><strong>Inductive learning</strong>：学习一个可泛化的预测函数</p>
+<p>学习一个映射 $f:\mathcal X \to \mathcal Y$，它可以应用到未来新来的样本 $x_{new}$。图级任务往往是 inductive 的。</p>
+</li>
+</ul>
+<p>此外还有一个概念<strong>Semi-supervised learning</strong>：同时利用有标签和无标签数据训练。</p>
+<p>transductive learning 几乎总是 semi-supervised，因为我们明确拿到了有标签节点和无标签节点，并且目标就是利用所有这些数据来预测无标签节点。</p>
+<p><br></p>
+<p>但图是离散结构，传统机器学习通常处理固定长度向量。那么，怎样把图上的节点、边、整张图变成机器学习模型能处理的形式？</p>
+<p>答案主要有两类：<br>第一类是 <strong>embedding</strong>，显式地把节点或图映射成向量；第二类是 <strong>kernel methods</strong>，不一定显式生成向量，而是直接定义两个对象之间的相似度函数。</p>
+<h4 id="Embedding"><a href="#Embedding" class="headerlink" title="Embedding"></a><strong>Embedding</strong></h4><p><strong>Node embedding</strong>：把图变换成一种表示，使每个节点都对应一个向量。形式上，节点嵌入函数是</p>
+<script type="math/tex; mode=display">
+\Phi: V \to \mathbb R^d</script><p>也就是把每个节点映射到 $d$ 维实数空间。embedding 空间里距离近的节点，应当在图结构意义上“相似”。</p>
+<p>embedding 没有唯一标准。不同方法的差异在于：如何定义 embedding 空间中的“相似”，以及想捕捉图的哪种性质。</p>
+<p>可以粗略地分为2类：</p>
+<ul>
+<li><strong>Spectral embeddings</strong>：节点相似通常意味着它们属于相同 cluster。</li>
+<li><strong>Deep embeddings</strong>：相似性取决于 loss function 和模型结构。</li>
+</ul>
+<h5 id="Spectral-embeddings"><a href="#Spectral-embeddings" class="headerlink" title="Spectral embeddings"></a><strong>Spectral embeddings</strong></h5><p>详见前面clustering那章的Spectral embeddings。</p>
+<h5 id="Deep-embeddings"><a href="#Deep-embeddings" class="headerlink" title="Deep embeddings"></a><strong>Deep embeddings</strong></h5><p><strong>DeepWalk</strong>：把图变成一组 random walks（也就是sequence of tokens），然后在这些随机游走序列上训练 word2vec。对每个节点 $v_i$，采样多条随机游走；这些 random walks 相当于 word2vec 里的句子，而节点 ID 相当于词。</p>
+<p>训练完成后，在图中距离近、共享邻居多的节点，会得到相似的向量表示。</p>
+<p><img src="/images/image-20260706100150122.png" class="lazyload" data-srcset="/images/image-20260706100150122.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="image-20260706100150122"></p>
+<p><br></p>
+<p><strong>Graph2Gauss</strong>：把节点映射成embedding空间中的一个高斯分布。目标是让一个节点的一阶邻居比二阶邻居更近，二阶邻居又比更远的节点更近，也就是保留图中的距离排序。（暂时先不考虑边权）</p>
+<p>它学习一个映射：</p>
+<script type="math/tex; mode=display">
+f_\theta: v_i \mapsto \mathcal N(\mu_\theta(x_i), \Sigma_\theta(x_i))</script><p>对于 attributed graph，$x_i$ 可以是节点特征；对于 plain graph，$x_i$ 可以是节点 ID，比如 one-hot 编码。</p>
+<p>mean $\mu_i$表示节点在embedding space中的大概位置，而variance $\Sigma_i$表示不确定性。</p>
+<p>用 <strong>KL divergence</strong> 来衡量两个节点对应的高斯分布的差别有多大（embedding的距离）：</p>
+<script type="math/tex; mode=display">
+E_{uv} = KL(f_\theta(u) \| f_\theta(v))</script><p>Graph2Gauss 的 inductive 能力依赖于 $x_i$。</p>
+<p>如果 $x_i$ 是真实节点属性，那么模型可以泛化到新节点。<br>但如果 $x_i$ 只有 node ID 或 one-hot encoding，那么模型更多是在记住训练图里的节点，泛化能力就弱很多。</p>
+<p>更进一步，如果两个节点 $u$ 和 $v$ 有完全相同的属性 $x$，但在图中距离很远，那么会出现一个问题：</p>
+<ul>
+<li>如果输入只看属性 $x$，它们输入一样；</li>
+<li>同一个函数 $f_\theta$ 对一样的输入可能输出一样或非常相近的高斯分布；</li>
+<li>但图结构却要求它们离得远。</li>
+</ul>
+<p>所以<strong>核心trade-off</strong>是：</p>
+<ul>
+<li>用节点属性做输入，inductive能力强，但可能区分不了属性相同、结构位置不同的节点；</li>
+<li>用node ID / one-hot做输入，可以区分节点，但inductive泛化能力变弱。</li>
+</ul>
+<h5 id="Graph-embedding"><a href="#Graph-embedding" class="headerlink" title="Graph embedding"></a><strong>Graph embedding</strong></h5><p>自然想法是：先算出每个节点的 embedding，再把所有节点 embedding 聚合成一个 graph embedding。问题是，不同图的节点数不同，直接拼接节点向量会导致维度不一致。PPT 给出的解决方法是：聚合所有节点 embedding，例如 mean pooling。</p>
+<p>也就是说，如果一张图有 $n$ 个节点，每个节点embedding是 $d$ 维，那么可以取平均：</p>
+<script type="math/tex; mode=display">
+h_G = \frac{1}{n}\sum_{i=1}^{n} h_i</script><p>其中</p>
+<script type="math/tex; mode=display">
+h_i \in \mathbb R^d</script><p>表示图$G$中第$i$个节点的embedding；</p>
+<p>这样无论图有多少节点，最终都得到一个固定长度的 $d$ 维图向量。然后就可以把这个 graph embedding 输入 SVM、神经网络等模型。</p>
+<p>除此之外还有其他聚合的方法：</p>
+<script type="math/tex; mode=display">
+h_G^{sum} = \sum_{i=1}^{n}h_i</script><p>保留规模信息，因为节点越多，sum 通常越大。</p>
+<script type="math/tex; mode=display">
+h_G^{max} = \max_{i=1}^{n} h_i</script><p>保留某些最强激活特征，但也不直接保留数量。</p>
+<h4 id="Kernel-methods"><a href="#Kernel-methods" class="headerlink" title="Kernel methods"></a><strong>Kernel methods</strong></h4><p>很多算法只依赖内积 $\phi(x)^T\phi(x’)$，所以我们不需要真的算出高维特征 $\phi(x)$，只需要找到一个 $k(x,x’)$ 满足：</p>
+<script type="math/tex; mode=display">
+k(x,x')=\phi(x)^T\phi(x')</script><p>然后后续直接计算$k(x,x’)$即可。不再需要先embedding然后再计算inner product。</p>
+<p><strong>Graph kernel methods</strong>的思路非常类似：与其像 embedding 方法那样显式学习 $\phi(G)$，不如直接定义两个图之间的相似度函数：</p>
+<script type="math/tex; mode=display">
+k: \mathcal G \times \mathcal G \to \mathbb R</script><p>也就是输入两张图，输出它们有多相似。</p>
+<p>graph kernels 通常通过共享结构模式来衡量相似性，例如 random walks、substructures、Weisfeiler-Lehman labels。它们主要用于 graph-level tasks，但也存在 node-level kernel。</p>
+<h4 id="Label-Propagation"><a href="#Label-Propagation" class="headerlink" title="Label Propagation"></a><strong>Label Propagation</strong></h4><h3 id="GNN"><a href="#GNN" class="headerlink" title="GNN"></a><strong>GNN</strong></h3>
   </div>
   
   
@@ -4162,7 +4469,7 @@ k_\omega(t-t_i)
 
 
   <div class='content'>
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Sequential-Data-Temporal-Data"><span class="toc-number">1.</span> <span class="toc-text">Sequential Data &#x2F; Temporal Data</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Autoregressive-Models"><span class="toc-number">1.1.</span> <span class="toc-text">Autoregressive Models</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Motivation-amp-Definitions"><span class="toc-number">1.1.1.</span> <span class="toc-text">Motivation &amp; Definitions</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E5%AD%A6%E4%B9%A0%EF%BC%88Parameter-learning%EF%BC%89"><span class="toc-number">1.1.2.</span> <span class="toc-text">参数学习（Parameter learning）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Stationary"><span class="toc-number">1.1.3.</span> <span class="toc-text">Stationary</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Markov-Chains"><span class="toc-number">1.2.</span> <span class="toc-text">Markov Chains</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E5%AD%A6%E4%B9%A0%EF%BC%88Parameter-learning%EF%BC%89-1"><span class="toc-number">1.2.1.</span> <span class="toc-text">参数学习（Parameter learning）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hidden-Markov-Models"><span class="toc-number">1.3.</span> <span class="toc-text">Hidden Markov Models</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Inference"><span class="toc-number">1.3.1.</span> <span class="toc-text">Inference</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Filtering"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">Filtering</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Smoothing"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">Smoothing</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#MAP-inference"><span class="toc-number">1.3.1.3.</span> <span class="toc-text">MAP inference</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Parameter-Learning"><span class="toc-number">1.3.2.</span> <span class="toc-text">Parameter Learning</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Continuous-Data"><span class="toc-number">1.3.3.</span> <span class="toc-text">Continuous Data</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Neural-Network-Approches"><span class="toc-number">1.4.</span> <span class="toc-text">Neural Network Approches</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Word-Vectors"><span class="toc-number">1.4.1.</span> <span class="toc-text">Word Vectors</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#RNNs"><span class="toc-number">1.4.2.</span> <span class="toc-text">RNNs</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#GRU-Gated-Recurrent-Unit"><span class="toc-number">1.4.2.1.</span> <span class="toc-text">GRU (Gated Recurrent Unit)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#LSTM-Long-Short-Term-Memory"><span class="toc-number">1.4.2.2.</span> <span class="toc-text">LSTM (Long Short-Term Memory)</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Non-Recurrent-Modesl-ConvNets-Transformer"><span class="toc-number">1.4.3.</span> <span class="toc-text">Non-Recurrent Modesl (ConvNets, Transformer)</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#ConvNets-WaveNet"><span class="toc-number">1.4.3.1.</span> <span class="toc-text">ConvNets&#x2F;WaveNet</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Transformer-amp-Attention"><span class="toc-number">1.4.3.2.</span> <span class="toc-text">Transformer&amp;Attention</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Stuctured-State-Space-Models"><span class="toc-number">1.4.4.</span> <span class="toc-text">Stuctured State Space Models</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#State-space-model"><span class="toc-number">1.4.4.1.</span> <span class="toc-text">State-space model</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#S4-model"><span class="toc-number">1.4.4.2.</span> <span class="toc-text">S4 model</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Event-Data-Modeling"><span class="toc-number">2.</span> <span class="toc-text">Event Data Modeling</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Selected-TPP-Models"><span class="toc-number">2.1.</span> <span class="toc-text">Selected TPP Models</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%94%A8-lambda-t-%E5%BB%BA%E6%A8%A1"><span class="toc-number">2.1.1.</span> <span class="toc-text">用$\lambda^*(t)$建模</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Homogeneous-Poisson-Process%EF%BC%88HPP%EF%BC%89"><span class="toc-number">2.1.1.1.</span> <span class="toc-text">Homogeneous Poisson Process（HPP）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Inhomogeneous-Poisson-Process-%EF%BC%88IPP%EF%BC%89"><span class="toc-number">2.1.1.2.</span> <span class="toc-text">Inhomogeneous Poisson Process （IPP）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Hawkes-Process"><span class="toc-number">2.1.1.3.</span> <span class="toc-text">Hawkes Process</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E4%BC%B0%E8%AE%A1-%E5%AD%A6%E4%B9%A0"><span class="toc-number">2.1.1.4.</span> <span class="toc-text">参数估计&#x2F;学习</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BB%BA%E6%A8%A1-p-t"><span class="toc-number">2.1.2.</span> <span class="toc-text">建模$p^*(t)$</span></a></li></ol></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Sequential-Data-Temporal-Data"><span class="toc-number">1.</span> <span class="toc-text">Sequential Data &#x2F; Temporal Data</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Autoregressive-Models"><span class="toc-number">1.1.</span> <span class="toc-text">Autoregressive Models</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Motivation-amp-Definitions"><span class="toc-number">1.1.1.</span> <span class="toc-text">Motivation &amp; Definitions</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E5%AD%A6%E4%B9%A0%EF%BC%88Parameter-learning%EF%BC%89"><span class="toc-number">1.1.2.</span> <span class="toc-text">参数学习（Parameter learning）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Stationary"><span class="toc-number">1.1.3.</span> <span class="toc-text">Stationary</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Markov-Chains"><span class="toc-number">1.2.</span> <span class="toc-text">Markov Chains</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E5%AD%A6%E4%B9%A0%EF%BC%88Parameter-learning%EF%BC%89-1"><span class="toc-number">1.2.1.</span> <span class="toc-text">参数学习（Parameter learning）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hidden-Markov-Models"><span class="toc-number">1.3.</span> <span class="toc-text">Hidden Markov Models</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Inference"><span class="toc-number">1.3.1.</span> <span class="toc-text">Inference</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Filtering"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">Filtering</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Smoothing"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">Smoothing</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#MAP-inference"><span class="toc-number">1.3.1.3.</span> <span class="toc-text">MAP inference</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Parameter-Learning"><span class="toc-number">1.3.2.</span> <span class="toc-text">Parameter Learning</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Continuous-Data"><span class="toc-number">1.3.3.</span> <span class="toc-text">Continuous Data</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Neural-Network-Approches"><span class="toc-number">1.4.</span> <span class="toc-text">Neural Network Approches</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Word-Vectors"><span class="toc-number">1.4.1.</span> <span class="toc-text">Word Vectors</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#RNNs"><span class="toc-number">1.4.2.</span> <span class="toc-text">RNNs</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#GRU-Gated-Recurrent-Unit"><span class="toc-number">1.4.2.1.</span> <span class="toc-text">GRU (Gated Recurrent Unit)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#LSTM-Long-Short-Term-Memory"><span class="toc-number">1.4.2.2.</span> <span class="toc-text">LSTM (Long Short-Term Memory)</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Non-Recurrent-Modesl-ConvNets-Transformer"><span class="toc-number">1.4.3.</span> <span class="toc-text">Non-Recurrent Modesl (ConvNets, Transformer)</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#ConvNets-WaveNet"><span class="toc-number">1.4.3.1.</span> <span class="toc-text">ConvNets&#x2F;WaveNet</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Transformer-amp-Attention"><span class="toc-number">1.4.3.2.</span> <span class="toc-text">Transformer&amp;Attention</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Stuctured-State-Space-Models"><span class="toc-number">1.4.4.</span> <span class="toc-text">Stuctured State Space Models</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#State-space-model"><span class="toc-number">1.4.4.1.</span> <span class="toc-text">State-space model</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#S4-model"><span class="toc-number">1.4.4.2.</span> <span class="toc-text">S4 model</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Event-Data-Modeling"><span class="toc-number">2.</span> <span class="toc-text">Event Data Modeling</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Selected-TPP-Models"><span class="toc-number">2.1.</span> <span class="toc-text">Selected TPP Models</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%94%A8-lambda-t-%E5%BB%BA%E6%A8%A1"><span class="toc-number">2.1.1.</span> <span class="toc-text">用$\lambda^*(t)$建模</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Homogeneous-Poisson-Process%EF%BC%88HPP%EF%BC%89"><span class="toc-number">2.1.1.1.</span> <span class="toc-text">Homogeneous Poisson Process（HPP）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Inhomogeneous-Poisson-Process-%EF%BC%88IPP%EF%BC%89"><span class="toc-number">2.1.1.2.</span> <span class="toc-text">Inhomogeneous Poisson Process （IPP）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Hawkes-Process"><span class="toc-number">2.1.1.3.</span> <span class="toc-text">Hawkes Process</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E4%BC%B0%E8%AE%A1-%E5%AD%A6%E4%B9%A0"><span class="toc-number">2.1.1.4.</span> <span class="toc-text">参数估计&#x2F;学习</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BB%BA%E6%A8%A1-p-t"><span class="toc-number">2.1.2.</span> <span class="toc-text">建模$p^*(t)$</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Graphs"><span class="toc-number">3.</span> <span class="toc-text">Graphs</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Ranking"><span class="toc-number">3.1.</span> <span class="toc-text">Ranking</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#PageRank"><span class="toc-number">3.1.1.</span> <span class="toc-text">PageRank</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Random-Teleports"><span class="toc-number">3.1.2.</span> <span class="toc-text">Random Teleports</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Clustering"><span class="toc-number">3.2.</span> <span class="toc-text">Clustering</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Minimum-Cut"><span class="toc-number">3.2.1.</span> <span class="toc-text">Minimum Cut</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#spectral-embeddings"><span class="toc-number">3.2.2.</span> <span class="toc-text">spectral embeddings</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Modularity"><span class="toc-number">3.2.3.</span> <span class="toc-text">Modularity</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Probabilistic-Approaches"><span class="toc-number">3.2.4.</span> <span class="toc-text">Probabilistic Approaches</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Prediction"><span class="toc-number">3.3.</span> <span class="toc-text">Prediction</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Embedding"><span class="toc-number">3.3.1.</span> <span class="toc-text">Embedding</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Spectral-embeddings"><span class="toc-number">3.3.1.1.</span> <span class="toc-text">Spectral embeddings</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Deep-embeddings"><span class="toc-number">3.3.1.2.</span> <span class="toc-text">Deep embeddings</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Graph-embedding"><span class="toc-number">3.3.1.3.</span> <span class="toc-text">Graph embedding</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Kernel-methods"><span class="toc-number">3.3.2.</span> <span class="toc-text">Kernel methods</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Label-Propagation"><span class="toc-number">3.3.3.</span> <span class="toc-text">Label Propagation</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GNN"><span class="toc-number">3.4.</span> <span class="toc-text">GNN</span></a></li></ol></li></ol>
   </div>
 </section>
 
@@ -4831,7 +5138,7 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
 </script>
 
 
-  <script type="application/ld+json">[{"@context":"https://schema.org.cn","@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"https://schema.org.cn","@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","sameAs":["https://github.com/volantis-x"],"description":"hi"},{"@context":"https://schema.org.cn","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https://archerui.github.io/","name":"Hexo"}},{"@type":"ListItem","position":2,"item":{"@id":"https://archerui.github.io/categories/AI/","name":"AI"}},{"@type":"ListItem","position":3,"item":{"@id":"https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/","name":"Machine Learning for Graphs and Sequential Data"}}]},{"@context":"https://schema.org.cn","@type":"WebSite","name":"Hexo","url":"https://archerui.github.io/","keywords":null,"description":"hi","author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","description":"hi"},"publisher":{"@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"https://archerui.github.io?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"https://schema.org.cn","@type":"BlogPosting","headline":"Machine Learning for Graphs and Sequential Data","description":"Machine Learning for Graphs and Sequential Data","inLanguage":"en","mainEntityOfPage":{"@type":"WebPage","@id":"https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/"},"author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/"},"publisher":{"@type":"Organization","name":"Hexo","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/","wordCount":47,"datePublished":"2026-04-19T22:14:35.000Z","dateModified":"2026-06-13T18:52:41.423Z","articleSection":"AI","keywords":"机器学习,Machine Learning,AI","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
+  <script type="application/ld+json">[{"@context":"https://schema.org.cn","@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"https://schema.org.cn","@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","sameAs":["https://github.com/volantis-x"],"description":"hi"},{"@context":"https://schema.org.cn","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https://archerui.github.io/","name":"Hexo"}},{"@type":"ListItem","position":2,"item":{"@id":"https://archerui.github.io/categories/AI/","name":"AI"}},{"@type":"ListItem","position":3,"item":{"@id":"https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/","name":"Machine Learning for Graphs and Sequential Data"}}]},{"@context":"https://schema.org.cn","@type":"WebSite","name":"Hexo","url":"https://archerui.github.io/","keywords":null,"description":"hi","author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","description":"hi"},"publisher":{"@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"https://archerui.github.io?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"https://schema.org.cn","@type":"BlogPosting","headline":"Machine Learning for Graphs and Sequential Data","description":"Machine Learning for Graphs and Sequential Data","inLanguage":"en","mainEntityOfPage":{"@type":"WebPage","@id":"https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/"},"author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/"},"publisher":{"@type":"Organization","name":"Hexo","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/","wordCount":47,"datePublished":"2026-04-19T22:14:35.000Z","dateModified":"2026-07-06T09:11:37.332Z","articleSection":"AI","keywords":"机器学习,Machine Learning,AI","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
 
 
 
