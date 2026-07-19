@@ -49,7 +49,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png">
 <meta property="article:published_time" content="2026-04-19T22:14:35.000Z">
-<meta property="article:modified_time" content="2026-07-10T13:13:04.449Z">
+<meta property="article:modified_time" content="2026-07-19T06:58:33.324Z">
 <meta property="article:tag" content="机器学习">
 <meta property="article:tag" content="Machine Learning">
 <meta property="article:tag" content="AI">
@@ -2248,7 +2248,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
     root: '/',
     debug: "env",
     default: {"avatar":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/avatar/round/3442075.svg","link":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/link/8f277b4ee0ecd.svg","cover":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/cover/76b86c0226ffd.svg","image":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/image/2659360.svg"},
-    lastupdate: new Date(1784117142184),
+    lastupdate: new Date(1784444335239),
     cdn: {
       izitoast_css: 'https://unpkg.com/izitoast@1.4.0/dist/css/iziToast.min.css',
       izitoast_js: 'https://unpkg.com/izitoast@1.4.0/dist/js/iziToast.min.js',
@@ -2722,10 +2722,10 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
           
         
           
-            <div class="new-meta-item date" itemprop="dateModified" datetime="2026-07-10T15:13:04+02:00">
+            <div class="new-meta-item date" itemprop="dateModified" datetime="2026-07-19T08:58:33+02:00">
   <a class='notlink'>
     <i class="fa-solid fa-edit fa-fw" aria-hidden="true"></i>
-    <p>Last UpdatedJul 10, 2026</p>
+    <p>Last UpdatedJul 19, 2026</p>
   </a>
 </div>
 
@@ -3013,7 +3013,7 @@ P(\mathcal{D}) &= \prod_{n=1}^{N} P\!\left(x_{1:T_n}^{(n)}\right) \\
 & = \prod_{n=1}^{N} \left( \pi_{x_1^{(n)}} \prod_{t=1}^{T_n-1} A_{x_t^{(n)},x_{t+1}^{(n)}} \right)
 \end{align*}</script><p>统计初始状态次数（多少条序列是从$i$开始的）以及状态转移次数（$i$到$j$的次数）：</p>
 <script type="math/tex; mode=display">
-c(i) = \# (X_1 = i), \  c(i,j) = \# (X_t = i,X_t = j)</script><p>于是</p>
+c(i) = \# (X_1 = i), \  c(i,j) = \# (X_t = i,X_{t+1} = j)</script><p>于是</p>
 <script type="math/tex; mode=display">
 \log P(\mathcal{D}) = \sum_i c(i)\log \pi_i + \sum_i \sum_j c(i,j)\log A_{ij}</script><p>在满足$\sum_k \pi_k = 1$和$\sum_j A_{ij} = 1$的情况下maximize $\log P(\mathcal{D})$就会得到：</p>
 <script type="math/tex; mode=display">
@@ -3419,7 +3419,7 @@ N(X_t\mid \mu_i,\sigma_i^2 \cdot I)
 <p>1. CBOW (Continuous Bag-of-Words)：</p>
 <p>给定一个词周围的上下文词（window），预测中间词。</p>
 <p>但是这种方法对稀有词不太好，因为稀有词出现次数非常少，模型很少有机会把它作为要预测的目标词，所以不容易学好它的向量。</p>
-<p><strong>2. Skip-gram：</strong></p>
+<p>2. Skip-gram：</p>
 <p>给定中心词，预测它周围的上下文词。</p>
 <p>它对稀有词更友好（可以这样理解：如果一个 rare word 出现了，模型会强迫自己用这个 rare word 去预测它的上下文。这样模型必须理解这个 rare word 通常出现在什么环境中，因此更容易学到它的含义。），但训练起来也会更慢。</p>
 <p><strong>来看一下具体的结构：</strong></p>
@@ -3873,7 +3873,7 @@ y = \bar{K} * u</script><p><strong>训练时可以并行，因为整段序列的
 <script type="math/tex; mode=display">
 p^*(t):= p(t \mid \mathcal{H}(t))</script><p>并且不难注意到：</p>
 <script type="math/tex; mode=display">
-\forall t' \leq \text{max}\ \mathcal{H}(t): \ p(t=t' \mid \mathcal{H}(t))=0</script><p><img src="/images/image-20260612111628323.png" class="lazyload" data-srcset="/images/image-20260612111628323.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="image-20260612111628323"></p>
+\Pr\!\left(T_{\text{next event}}\le t\mid \mathcal H(t)\right)=0,</script><p><img src="/images/image-20260612111628323.png" class="lazyload" data-srcset="/images/image-20260612111628323.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="image-20260612111628323"></p>
 <p>（严格来讲图里的$\mathcal{H}(t)$应该只画到$t_3$那里。）</p>
 <p><strong><code>CDF</code></strong>：</p>
 <script type="math/tex; mode=display">
@@ -3914,7 +3914,7 @@ p^*(u)\,du</script><p>为下一个时间不发生在时间$t$之前的概率，�
 <script type="math/tex; mode=display">
 \begin{align*}
 p(\{t_1,t_2,t_3,t_4\})
-&= p(t_1)p(t_2 \mid t_1)p(t_3 \mid t_1,t_2)p(t_4 \mid t_1,t_2,t_3)S*(T) \\
+&= p(t_1)p(t_2 \mid t_1)p(t_3 \mid t_1,t_2)p(t_4 \mid t_1,t_2,t_3)S^*(T) \\
 &=
 p^*(t_1)p^*(t_2)p^*(t_3)p^*(t_4)S^*(T) \\
 &=
@@ -3940,13 +3940,13 @@ p^*(t)
 -\int_{t_{i-1}}^{t}\mu\,du
 \right)
 =
-\mu\exp\left(-\mu(t-t_{i-1})\right)</script><p>记$\tau_i = t-t_{i-1}$，那么</p>
+\mu\exp\left(-\mu(t-t_{i-1})\right)</script><p>记$\tau_i = t_i-t_{i-1}$，那么</p>
 <script type="math/tex; mode=display">
-P(\tau_i > t) = S(t) = \exp\left(-\mu \tau_i \right)</script><script type="math/tex; mode=display">
+P(\tau_i > s) = S(s) = \exp\left(-\mu s \right)</script><script type="math/tex; mode=display">
 \tau_i \sim \text{exponential}(\mu)</script><p>模拟HPP很简单：不断从指数分布采样间隔 $\tau_i$，然后累加得到事件时间：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">arrival_times = []</span><br><span class="line">t = <span class="number">0</span></span><br><span class="line"><span class="keyword">while</span> t &lt; T:</span><br><span class="line">    tau ~ Exponential(mu)</span><br><span class="line">    t += tau</span><br><span class="line">    <span class="keyword">if</span> t &lt; T:</span><br><span class="line">        arrival_times.append(t)</span><br></pre></td></tr></table></figure>
 <p>复习一下一个定理：</p>
-<div class="note green"><p><strong></strong></p><p><strong>Theorem （Inverse CDF Transform）</strong>: </p><p>设</p><script type="math/tex; mode=display">U \sim \operatorname{Uniform}(0,1)</script><p>设 $F:\mathbb{R}\to[0,1]$ 是某个随机变量的累积分布函数（CDF），定义广义反函数，即<strong>quantile function</strong>：</p><script type="math/tex; mode=display">F^{-1}(u):=\inf\{x\in\mathbb{R}:F(x)\ge u\},\quadu\in(0,1).</script><p>令</p><script type="math/tex; mode=display">X:=F^{-1}(U).</script><p>则 $X$ 的累积分布函数为 $F$，也就是说：</p><script type="math/tex; mode=display">X\sim F.</script><p>换句话说：</p><script type="math/tex; mode=display">\Pr(X\le x)=F(x),\quad\forall x\in\mathbb{R}.</script></div>
+<div class="note green"><p><strong></strong></p><p><strong>Theorem （Inverse CDF Transform）</strong>: </p><p>设</p><script type="math/tex; mode=display">U \sim \operatorname{Uniform}(0,1)</script><p>设 $F:\mathbb{R}\to[0,1]$ 是某个随机变量的累积分布函数（CDF），定义广义反函数，即<strong>quantile function</strong>：</p><script type="math/tex; mode=display">F^{-1}(u):=\inf\{x\in\mathbb{R}:F(x)\ge u\},\quad u\in(0,1).</script><p>令</p><script type="math/tex; mode=display">X:=F^{-1}(U).</script><p>则 $X$ 的累积分布函数为 $F$，也就是说：</p><script type="math/tex; mode=display">X\sim F.</script><p>换句话说：</p><script type="math/tex; mode=display">\Pr(X\le x)=F(x),\quad\forall x\in\mathbb{R}.</script></div>
 <p><br></p>
 <p>所以<strong>取样（Sampling）</strong>的话就很简单：</p>
 <p>取$u \sim \operatorname{Uniform}(0,1)$，那么</p>
@@ -4442,9 +4442,9 @@ L_{UU}^{-1}L_{US}\hat{\mathbf y}_S
 <p>而想要$L_{UU}$可逆也并不困难：</p>
 <div class="note green"><p><strong></strong></p><p><strong>Theorem</strong>:</p><script type="math/tex; mode=display">L_{UU}\text{ 可逆}\iff\text{每个连通分量都至少包含一个 labeled node}</script></div>
 <p>证明：</p>
-<p>对任意 $\mathbf x\in\mathbb R^{|U|}$，有：</p>
+<p>对任意 $\mathbf z\in\mathbb R^{|U|}$，有：</p>
 <script type="math/tex; mode=display">
-\mathbf x^T L_{UU}\mathbf x
+\mathbf z^T L_{UU}\mathbf z
 =
 \begin{bmatrix}
 0\\
@@ -5535,7 +5535,7 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
 </script>
 
 
-  <script type="application/ld+json">[{"@context":"https://schema.org.cn","@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"https://schema.org.cn","@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","sameAs":["https://github.com/volantis-x"],"description":"hi"},{"@context":"https://schema.org.cn","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https://archerui.github.io/","name":"Hexo"}},{"@type":"ListItem","position":2,"item":{"@id":"https://archerui.github.io/categories/AI/","name":"AI"}},{"@type":"ListItem","position":3,"item":{"@id":"https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/","name":"Machine Learning for Graphs and Sequential Data"}}]},{"@context":"https://schema.org.cn","@type":"WebSite","name":"Hexo","url":"https://archerui.github.io/","keywords":null,"description":"hi","author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","description":"hi"},"publisher":{"@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"https://archerui.github.io?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"https://schema.org.cn","@type":"BlogPosting","headline":"Machine Learning for Graphs and Sequential Data","description":"Machine Learning for Graphs and Sequential Data","inLanguage":"en","mainEntityOfPage":{"@type":"WebPage","@id":"https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/"},"author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/"},"publisher":{"@type":"Organization","name":"Hexo","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/","wordCount":47,"datePublished":"2026-04-19T22:14:35.000Z","dateModified":"2026-07-10T13:13:04.449Z","articleSection":"AI","keywords":"机器学习,Machine Learning,AI","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
+  <script type="application/ld+json">[{"@context":"https://schema.org.cn","@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"https://schema.org.cn","@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","sameAs":["https://github.com/volantis-x"],"description":"hi"},{"@context":"https://schema.org.cn","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https://archerui.github.io/","name":"Hexo"}},{"@type":"ListItem","position":2,"item":{"@id":"https://archerui.github.io/categories/AI/","name":"AI"}},{"@type":"ListItem","position":3,"item":{"@id":"https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/","name":"Machine Learning for Graphs and Sequential Data"}}]},{"@context":"https://schema.org.cn","@type":"WebSite","name":"Hexo","url":"https://archerui.github.io/","keywords":null,"description":"hi","author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/","description":"hi"},"publisher":{"@type":"Organization","name":"Hexo","url":"https://archerui.github.io/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"https://archerui.github.io?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"https://schema.org.cn","@type":"BlogPosting","headline":"Machine Learning for Graphs and Sequential Data","description":"Machine Learning for Graphs and Sequential Data","inLanguage":"en","mainEntityOfPage":{"@type":"WebPage","@id":"https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/"},"author":{"@type":"Person","name":null,"image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://archerui.github.io/"},"publisher":{"@type":"Organization","name":"Hexo","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"https://archerui.github.io/2026/04/20/AI/Machine-Learning-for-Graphs-and-Sequential-Data/","wordCount":47,"datePublished":"2026-04-19T22:14:35.000Z","dateModified":"2026-07-19T06:58:33.324Z","articleSection":"AI","keywords":"机器学习,Machine Learning,AI","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1660614606622/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
 
 
 
