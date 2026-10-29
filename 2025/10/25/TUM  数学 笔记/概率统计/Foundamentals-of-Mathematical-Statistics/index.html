@@ -2247,7 +2247,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
     root: '/',
     debug: "env",
     default: {"avatar":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/avatar/round/3442075.svg","link":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/link/8f277b4ee0ecd.svg","cover":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/cover/76b86c0226ffd.svg","image":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/image/2659360.svg"},
-    lastupdate: new Date(1789758325884),
+    lastupdate: new Date(1793307720803),
     cdn: {
       izitoast_css: 'https://unpkg.com/izitoast@1.4.0/dist/css/iziToast.min.css',
       izitoast_js: 'https://unpkg.com/izitoast@1.4.0/dist/js/iziToast.min.js',
@@ -3721,9 +3721,34 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
 
 
   <script>
-  let imgs = ["/background/wallhaven-jewjp5_2560x1080.png"];
+  let imgs = ["/background/wallhaven-rqddem.jpg","/background/wallhaven-jewjp5_2560x1080.png","/background/wallhaven-6dvy9w.png","/background/wallhaven-xe86w3.png"];
   let index = 0;
-  let IntervalParallax = null;
+  let parallaxTimer = null;
+  const parallaxDuration = 30000;
+  let parallaxRemaining = parallaxDuration;
+  let parallaxStartedAt = 0;
+
+  function schedule_parallax() {
+    if (parallaxTimer !== null) {
+      clearTimeout(parallaxTimer);
+      parallaxTimer = null;
+      parallaxRemaining = Math.max(0, parallaxRemaining - (performance.now() - parallaxStartedAt));
+    }
+    if (document.hidden || imgs.length <= 1) {
+      return;
+    }
+    parallaxStartedAt = performance.now();
+    parallaxTimer = setTimeout(function () {
+      parallaxTimer = null;
+      parallaxRemaining = 0;
+      if (document.hidden) {
+        return;
+      }
+      next_parallax();
+      parallaxRemaining = parallaxDuration;
+      schedule_parallax();
+    }, parallaxRemaining);
+  }
 
   function parallax(){
     let ParallaxWindow = document.querySelector("#parallax-window");
@@ -3735,15 +3760,18 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
     Parallax.cache = 1;
     next_parallax();
     Parallax.init();
-    if (imgs.length>1) {
-      IntervalParallax = setInterval(function () {
+    // Count only visible time; resume the remaining delay without catching up.
+    document.addEventListener('visibilitychange', function () {
+      if (!document.hidden && index === 0) {
         next_parallax();
-      }, '31536000000');
-    }
+      }
+      schedule_parallax();
+    });
+    schedule_parallax();
   }
 
   function next_parallax() {
-    if (typeof Parallax == "undefined") {
+    if (document.hidden || typeof Parallax == "undefined") {
       return
     }
     
