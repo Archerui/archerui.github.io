@@ -3,28 +3,37 @@ Parallax.options = {};
 Parallax.options.speed = 0.25;
 Parallax.options.zIndex = -100;
 Parallax.options.fade = 1500;
-Parallax.slidein = () => {
-  let slider = Parallax.mirrors[0].slider;
-  if (Parallax.mirrors.length >= 2) {
-    slider = Parallax.mirrors[1].slider;
+Parallax.fadeTimer = null;
+Parallax.finish = () => {
+  clearTimeout(Parallax.fadeTimer);
+  Parallax.fadeTimer = null;
+  if (!Parallax.mirrors || !Parallax.mirrors.length) {
+    return;
   }
-  var opac = parseFloat(slider.style.opacity);
-  if (opac !== 1) {
-    if (Parallax.mirrors.length >= 2) {
-      opac = opac + 0.1;
-      slider.style.opacity = opac;
-      setTimeout(Parallax.slidein, Parallax.options.fade / 10);
-    }else{
-      slider.style.opacity = 1;
-    }
+  while (Parallax.mirrors.length > 1) {
+    Parallax.mirrors.shift().mirror.remove();
+  }
+  Parallax.mirrors[0].slider.style.opacity = 1;
+};
+Parallax.slidein = () => {
+  clearTimeout(Parallax.fadeTimer);
+  Parallax.fadeTimer = null;
+  if (document.hidden || Parallax.mirrors.length < 2) {
+    Parallax.finish();
+    return;
+  }
+  const slider = Parallax.mirrors[Parallax.mirrors.length - 1].slider;
+  const opacity = Math.min(1, parseFloat(slider.style.opacity) + 0.1);
+  slider.style.opacity = opacity;
+  if (opacity >= 1) {
+    Parallax.finish();
   } else {
-    if (Parallax.mirrors.length >= 2) {
-      Parallax.mirrors[0].mirror.remove();
-      Parallax.mirrors.shift();
-    }
+    Parallax.fadeTimer = setTimeout(Parallax.slidein, Parallax.options.fade / 10);
   }
 };
-Parallax.start = () => {
+Parallax.start = (immediate = false) => {
+  // Finish the previous transition before creating another layer.
+  Parallax.finish();
   let mirror = document.createElement("div");
   mirror.classList.add("parallax-mirror");
   mirror.style.visibility = "hidden";
@@ -47,7 +56,11 @@ Parallax.start = () => {
   mirrorItem.mirror = mirror;
   mirrorItem.slider = slider;
   Parallax.mirrors.push(mirrorItem);
-  Parallax.slidein();
+  if (immediate || document.hidden || Parallax.options.fade <= 0) {
+    Parallax.finish();
+  } else {
+    Parallax.slidein();
+  }
   slider.addEventListener(
     "load",
     function () {

@@ -2248,7 +2248,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
     root: '/',
     debug: "env",
     default: {"avatar":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/avatar/round/3442075.svg","link":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/link/8f277b4ee0ecd.svg","cover":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/cover/76b86c0226ffd.svg","image":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/image/2659360.svg"},
-    lastupdate: new Date(1793308813003),
+    lastupdate: new Date(1793309324684),
     cdn: {
       izitoast_css: 'https://unpkg.com/izitoast@1.4.0/dist/css/iziToast.min.css',
       izitoast_js: 'https://unpkg.com/izitoast@1.4.0/dist/js/iziToast.min.js',
@@ -3324,32 +3324,42 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
 
   <script>
   let imgs = ["/background/wallhaven-rqddem.jpg","/background/wallhaven-jewjp5_2560x1080.png","/background/wallhaven-6dvy9w.png","/background/wallhaven-xe86w3.png"];
-  let index = 0;
+  let index = -1;
+  let parallaxStep = -1;
   let parallaxTimer = null;
   const parallaxDuration = 30000;
-  let parallaxRemaining = parallaxDuration;
-  let parallaxStartedAt = 0;
+  let parallaxStartedAt = Date.now();
+  const parallaxPreloaded = new Set();
+
+  // Keep the same timeline when navigating between pages in this tab.
+  try {
+    const key = 'volantis-parallax-timeline';
+    const playlist = JSON.stringify(imgs);
+    const saved = JSON.parse(sessionStorage.getItem(key));
+    if (saved && saved.playlist === playlist && saved.duration === parallaxDuration &&
+        Number.isFinite(saved.startedAt) && saved.startedAt <= parallaxStartedAt) {
+      parallaxStartedAt = saved.startedAt;
+    } else {
+      sessionStorage.setItem(key, JSON.stringify({
+        playlist: playlist, duration: parallaxDuration, startedAt: parallaxStartedAt
+      }));
+    }
+  } catch (error) {
+    // Storage can be unavailable; rotation still works on the current page.
+  }
 
   function schedule_parallax() {
-    if (parallaxTimer !== null) {
-      clearTimeout(parallaxTimer);
-      parallaxTimer = null;
-      parallaxRemaining = Math.max(0, parallaxRemaining - (performance.now() - parallaxStartedAt));
-    }
-    if (document.hidden || imgs.length <= 1) {
+    clearTimeout(parallaxTimer);
+    parallaxTimer = null;
+    if (imgs.length <= 1) {
       return;
     }
-    parallaxStartedAt = performance.now();
+    const elapsed = Math.max(0, Date.now() - parallaxStartedAt);
     parallaxTimer = setTimeout(function () {
       parallaxTimer = null;
-      parallaxRemaining = 0;
-      if (document.hidden) {
-        return;
-      }
       next_parallax();
-      parallaxRemaining = parallaxDuration;
       schedule_parallax();
-    }, parallaxRemaining);
+    }, parallaxDuration - elapsed % parallaxDuration);
   }
 
   function parallax(){
@@ -3359,40 +3369,49 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
     
     Parallax.window = ParallaxWindow;
     Parallax.options.fade = 1500;
-    Parallax.cache = 1;
-    next_parallax();
+    next_parallax(true);
     Parallax.init();
-    // Count only visible time; resume the remaining delay without catching up.
+    // Background timers may be throttled: jump to the current slide, never replay.
     document.addEventListener('visibilitychange', function () {
-      if (!document.hidden && index === 0) {
-        next_parallax();
-      }
+      Parallax.finish();
+      next_parallax(true);
+      schedule_parallax();
+    });
+    window.addEventListener('pageshow', function () {
+      Parallax.finish();
+      next_parallax(true);
       schedule_parallax();
     });
     schedule_parallax();
   }
 
-  function next_parallax() {
-    if (document.hidden || typeof Parallax == "undefined") {
+  function next_parallax(immediate = false) {
+    if (typeof Parallax == "undefined") {
       return
     }
     
     if (imgs.length>=1) {
-      Parallax.options.src = imgs[index % imgs.length];
-      Parallax.start();
-      index++;
-      if (Parallax.cache) {
-        fetch(imgs[index % imgs.length] +"?t=" + new Date().getTime());
-        if (index == imgs.length) {
-          Parallax.cache = 0;
-        }
+      const step = Math.floor(Math.max(0, Date.now() - parallaxStartedAt) / parallaxDuration);
+      const current = step % imgs.length;
+      const skipped = step > parallaxStep + 1;
+      parallaxStep = step;
+      if (current === index) {
+        return;
+      }
+      index = current;
+      Parallax.options.src = imgs[index];
+      Parallax.start(immediate || document.hidden || skipped);
+      const next = imgs[(index + 1) % imgs.length];
+      if (imgs.length > 1 && !parallaxPreloaded.has(next)) {
+        parallaxPreloaded.add(next);
+        fetch(next).catch(() => {});
       }
     }
   }
   var runningOnBrowser = typeof window !== "undefined";
   var isBot = runningOnBrowser && !("onscroll" in window) || typeof navigator !== "undefined" && /(gle|ing|ro|msn)bot|crawl|spider|yand|duckgo/i.test(navigator.userAgent);
   if (!isBot) {
-    volantis.js('/js/plugins/parallax.js').then(()=>{
+    volantis.js('/js/plugins/parallax.js?v=wallpaper-timeline-1').then(()=>{
       parallax()
     })
   }
